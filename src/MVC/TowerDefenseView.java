@@ -11,7 +11,7 @@ public class TowerDefenseView extends Application implements Observer{
 	
 	
 	public TowerDefenseView() {
-		
+		System.out.println("hello");
 	}
 	
 	
