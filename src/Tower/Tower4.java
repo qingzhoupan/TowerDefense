@@ -17,4 +17,4 @@ public class Tower4 extends Tower {
 		this.damage *= 2;
 	}
 
-}
+} 
