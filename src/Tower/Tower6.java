@@ -16,5 +16,5 @@ public class Tower6 extends Tower {
 	public  void upgrade() {
 		this.damage *= 2;
 	}
-
+	
 } 
