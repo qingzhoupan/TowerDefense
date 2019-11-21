@@ -23,7 +23,6 @@ public class TowerDefenseView extends Application implements Observer{
 	
 	
 	
-	
 	@Override
 	public void start(Stage stage) throws Exception {
 		stage.setTitle("Tower Defense");
