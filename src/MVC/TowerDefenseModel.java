@@ -6,7 +6,7 @@ public class TowerDefenseModel extends Observable{
 	
 	
 	public TowerDefenseModel() {
-		System.out.println("work");
+		System.out.println("work");	
 	}
 	
 	
