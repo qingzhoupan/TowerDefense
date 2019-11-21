@@ -2,9 +2,23 @@ package Tower;
 
 public class Tower1 extends Tower {
 
-	public Tower1(int x, int y, int damage, int cost, int soldPrice, int range, boolean exist) {
-		super(x, y, damage, cost, soldPrice, range, exist);
-		// TODO Auto-generated constructor stub
+	public Tower1(int x, int y) {
+		super();
+		this.x = x;
+		this.y = y;
+		this.damage = 1;
+		this.cost = 1;
+		this.soldPrice = 1;
+		this.range = 1;
+		this.exist = true;
 	}
+
+	public  void upgrade() {
+		this.damage *= 2;
+	}
+	
+	
+	
+	
 	
 }
