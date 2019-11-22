@@ -22,7 +22,7 @@ public class TowerDefenseView extends Application implements Observer{
 	public TowerDefenseView() {
 		TowerDefenseModel model = new TowerDefenseModel();
 		model.addObserver(this);
-		controller = new TowerDefenseController();
+		controller = new TowerDefenseController(this);//wei added parameter this for controller
 	}
 	
 	
