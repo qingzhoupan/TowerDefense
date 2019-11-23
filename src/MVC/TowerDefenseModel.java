@@ -2,17 +2,62 @@ package MVC;
 
 import java.util.Observable;
 
+import Tower.Tower;
+
 public class TowerDefenseModel extends Observable{
 	
+	private final int ROW = 15; //this is temporary
+	private final int COL = 15; //this is temporary
+	
 	private Object board [][];
+	private Tower LAST_CLICKED_TOWER; 
+	private int balance;
+	
+	public int getRow() {
+		return this.ROW;
+	}
+	
+	public int getCol() {
+		return this.COL;
+	}
+	
+	public Object getPos(int row, int col) {
+		return board[row][col];
+	}
+	
+	public Tower getLCT() {
+		return this.LAST_CLICKED_TOWER;
+	}
+	
+	public void setLCT(Tower tower) {
+		this.LAST_CLICKED_TOWER = tower;
+	}
+	
+	public int getBalance() {
+		return this.balance;
+	}
 	
 	public TowerDefenseModel() {
-		board = new Object [TowerDefenseController.ROW][TowerDefenseController.COL];
+		board = new Object [ROW][COL];
+		this.balance = 1000;
+//		for() {
+//			
+//		}
 	}
 	
 	public void boardInformation() {
 		//tower placement
 		//enemy real time location? 
+	}
+
+	public void placeTower(int row, int col) {
+		board[row][col] = LAST_CLICKED_TOWER;
+		System.out.println(LAST_CLICKED_TOWER.getCost());
+		this.balance -= LAST_CLICKED_TOWER.getCost();
+		System.out.println("balance" + this.balance);
+		TowerDefenseMessge message = new TowerDefenseMessge(row, col, 2);
+		setChanged();
+		notifyObservers(message);
 	}
 	
 

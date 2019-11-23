@@ -3,12 +3,12 @@ package Tower;
 public class Tower1 extends Tower {
 
 
-	public Tower1(int x, int y) {
+	public Tower1() {
 		super();
-		this.x = x;
-		this.y = y;
+//		this.x = x;
+//		this.y = y;
 		this.damage = 1;
-		this.cost = 1;
+		this.cost = 200;
 		this.soldPrice = 1;
 		this.range = 1;
 		this.exist = true;
