@@ -2,6 +2,7 @@ package MVC;
 
 import java.util.Observable;
 
+import Networking.TowerDefenseMessge;
 import Tower.Tower;
 
 public class TowerDefenseModel extends Observable{

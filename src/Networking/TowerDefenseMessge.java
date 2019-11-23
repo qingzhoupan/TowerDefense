@@ -1,4 +1,4 @@
-package MVC;
+package Networking;
 
 public class TowerDefenseMessge {
 	private int row;
