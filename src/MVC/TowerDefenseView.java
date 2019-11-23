@@ -41,16 +41,19 @@ public class TowerDefenseView extends Application implements Observer{
 		Scene scene = new Scene(window, 850, 750);
 //		createTopContainer(window);
 		//createMainContainer(window);
-		draw(window);
+		createBoard(window);
 		createRightContainer(window);
 		stage.setScene(scene);
 		stage.show();
 	}
 
 	
-	
-	private void draw(BorderPane window) {
-		
+	/**
+	 * Creates 50x50 grid which represents the 2D array. Each position
+	 * corresponds to the array.
+	 * @param window: BorderPane to set grid
+	 */
+	private void createBoard(BorderPane window) {
 		for(int i = 0; i < controller.getCol(); i++) {
 			for(int j = 0; j < controller.getRow(); j++) {
 				Rectangle rec = new Rectangle();
@@ -63,8 +66,8 @@ public class TowerDefenseView extends Application implements Observer{
 		gridPane.setOnMouseClicked(e -> {
 			int x = (int) e.getX();
 			int y = (int) e.getY();
-			if(controller.is_tower_here(x, y) == false) {
-				if(controller.getLCT() != null) {
+			if(controller.is_tower_here(x, y) == false) { //no tower at location
+				if(controller.getLCT() != null) { //last clicked not null
 					controller.placeTower(x, y);
 				}
 			}
@@ -76,10 +79,23 @@ public class TowerDefenseView extends Application implements Observer{
 	}
 
 
-
+	/**
+	 * Creates the menu, money, and tower vBoxes that's displayed on the right.
+	 * @param window BorderPane to add vBoxes
+	 */
 	private void createRightContainer(BorderPane window) {
-		VBox vBox = new VBox();
-		
+		VBox vBox = new VBox(50);
+		createMenu(vBox); // menu VBox
+		createMoney(vBox); // money VBox
+		createTowers(vBox); // tower VBox
+		window.setRight(vBox);
+	}
+	
+	/**
+	 * Creates the menu drop down for new game, pause, and speed
+	 * @param vBox Vertical box to add children.
+	 */
+	private void createMenu(VBox vBox) {
 		// Menu VBox
 		MenuBar menuBar = new MenuBar();
 		Menu menu = new Menu("Menu");
@@ -97,20 +113,28 @@ public class TowerDefenseView extends Application implements Observer{
 		menuBar.getMenus().add(menu);
 		VBox menuBox = new VBox(menuBar);
 		vBox.getChildren().add(menuBox);
-		
-		
-		// Money VBox
-		HBox moneyBox = new HBox();
+	}
+	
+	/**
+	 * Creates the total balance for the game.
+	 * @param vBox Vertical box to add children
+	 */
+	private void createMoney(VBox vBox) {
+		VBox moneyBox = new VBox(5);
 		TextFlow moneyDisplay = new TextFlow();
-		Text moneyTitle = new Text("Balance: ");
+		Text moneyTitle = new Text("Balance");
 		//controller.getStartingBalance 
 		moneyBalance = new Label(Integer.toString(controller.getBalance()));
 		moneyBox.getChildren().addAll(moneyTitle, moneyBalance);
 		vBox.getChildren().add(moneyBox);
-		
-		
-		// Tower VBox
-		VBox towerBox = new VBox();
+	}
+	
+	/**
+	 * Creates tower boxes with event handlers.
+	 * @param vBox Vertical box to add children
+	 */
+	private void createTowers(VBox vBox) {
+		VBox towerBox = new VBox(50);
 		Button tower1 = new Button("Tower1");
 		Button tower2 = new Button("Tower2");
 		Button tower3 = new Button("Tower3");
@@ -126,11 +150,24 @@ public class TowerDefenseView extends Application implements Observer{
 		tower1.setOnAction(e -> {	
 			controller.set_last_clicked_tower("1");
 		});
+		tower2.setOnAction(e -> {	
+			controller.set_last_clicked_tower("2");
+		});
+		tower3.setOnAction(e -> {	
+			controller.set_last_clicked_tower("3");
+		});
+		tower4.setOnAction(e -> {	
+			controller.set_last_clicked_tower("4");
+		});
+		tower5.setOnAction(e -> {	
+			controller.set_last_clicked_tower("5");
+		});
+		tower6.setOnAction(e -> {	
+			controller.set_last_clicked_tower("6");
+		});
 		vBox.getChildren().add(towerBox);
-		
-		
-		window.setRight(vBox);
 	}
+	
 	
 	
 	//Event handlers methods
