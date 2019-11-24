@@ -21,19 +21,7 @@ public class TowerDefenseController {
 			model.addObserver(towerDefenseView);
 		}
 	}
-	
-	public int getRow() {
-		return model.getRow();
-	}
-	
-	public int getCol() {
-		return model.getCol();
-	}
-	
-	public void buyTower(Tower tower) {
-		
-	}
-	
+
 	/**
 	 * Calls model to place tower then sets last clicked tower to null.
 	 * @param x coordinate in pixels
@@ -84,6 +72,18 @@ public class TowerDefenseController {
 			return false;
 		}
 		return true;
+	}
+	
+	public void buyTower(Tower tower) {
+		
+	}
+
+	public int getRow() {
+		return model.getRow();
+	}
+	
+	public int getCol() {
+		return model.getCol();
 	}
 	
 	public Tower getLCT() {

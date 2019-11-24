@@ -20,6 +20,25 @@ public class TowerDefenseModel extends Observable{
 
 	}
 	
+	
+	/**
+	 * Places tower and notifies the observer if the cost is in the budget.
+	 * @param row coordinate of row.
+	 * @param col coordinate of col.
+	 */
+	public void placeTower(int row, int col) {
+		if((this.balance - LAST_CLICKED_TOWER.getCost()) >= 0) { //checks negative balance
+			board[row][col] = LAST_CLICKED_TOWER;
+			System.out.println(LAST_CLICKED_TOWER.getCost());
+			this.balance -= LAST_CLICKED_TOWER.getCost();
+			System.out.println("balance" + this.balance);
+			TowerDefenseMessge message = new TowerDefenseMessge(row, col, 2);
+			setChanged();
+			notifyObservers(message);
+		}
+	}
+	
+
 	public int getRow() {
 		return this.ROW;
 	}
@@ -50,22 +69,7 @@ public class TowerDefenseModel extends Observable{
 		//enemy real time location? 
 	}
 
-	/**
-	 * Places tower and notifies the observer if the cost is in the budget.
-	 * @param row coordinate of row.
-	 * @param col coordinate of col.
-	 */
-	public void placeTower(int row, int col) {
-		if((this.balance - LAST_CLICKED_TOWER.getCost()) >= 0) { //checks negative balance
-			board[row][col] = LAST_CLICKED_TOWER;
-			System.out.println(LAST_CLICKED_TOWER.getCost());
-			this.balance -= LAST_CLICKED_TOWER.getCost();
-			System.out.println("balance" + this.balance);
-			TowerDefenseMessge message = new TowerDefenseMessge(row, col, 2);
-			setChanged();
-			notifyObservers(message);
-		}
-	}
+
 	
 
 }

@@ -1,8 +1,6 @@
 package Tower;
 
 public abstract class Tower {
-	protected int x;
-	protected int y;
 	protected int damage;
 	protected int cost;
 	protected int soldPrice = (int) 0.75 * cost;
@@ -12,12 +10,6 @@ public abstract class Tower {
 	public abstract void upgrade();
 	
 	//setters
-	public void setX(int x) {
-		this.x = x;
-	}
-	public void setY(int y) {
-		this.y = y;
-	}
 	public void setDamage(int damage) {
 		this.damage = damage;
 	}
@@ -35,26 +27,20 @@ public abstract class Tower {
 	}
 	
 	//getters
-	public int getX() {
-		return x;
-	}
-	public int getY() {
-		return y;
-	}
 	public int getDamage() {
-		return damage;
+		return this.damage;
 	}
 	public int getCost() {
-		return cost;
+		return this.cost;
 	}
 	public int getSoldPrice() {
-		return soldPrice;
+		return this.soldPrice;
 	}
 	public int getRange() {
-		return range;
+		return this.range;
 	}
 	public boolean isExist() {
-		return exist;
+		return this.exist;
 	}
 	
 } 

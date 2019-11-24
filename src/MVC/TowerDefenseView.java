@@ -27,9 +27,7 @@ public class TowerDefenseView extends Application implements Observer{
 	private Label moneyBalance;
 	
 	public TowerDefenseView() {
-		TowerDefenseModel model = new TowerDefenseModel();
-		model.addObserver(this);
-		controller = new TowerDefenseController(this);//wei added parameter this for controller
+		controller = new TowerDefenseController(this);
 	}
 	
 	
@@ -39,8 +37,6 @@ public class TowerDefenseView extends Application implements Observer{
 		stage.setTitle("Tower Defense");
 		BorderPane window = new BorderPane();
 		Scene scene = new Scene(window, 850, 750);
-//		createTopContainer(window);
-		//createMainContainer(window);
 		createBoard(window);
 		createRightContainer(window);
 		stage.setScene(scene);
@@ -122,7 +118,7 @@ public class TowerDefenseView extends Application implements Observer{
 	private void createMoney(VBox vBox) {
 		VBox moneyBox = new VBox(5);
 		TextFlow moneyDisplay = new TextFlow();
-		Text moneyTitle = new Text("Balance");
+		Text moneyTitle = new Text("BALANCE");
 		//controller.getStartingBalance 
 		moneyBalance = new Label(Integer.toString(controller.getBalance()));
 		moneyBox.getChildren().addAll(moneyTitle, moneyBalance);
@@ -134,38 +130,62 @@ public class TowerDefenseView extends Application implements Observer{
 	 * @param vBox Vertical box to add children
 	 */
 	private void createTowers(VBox vBox) {
-		VBox towerBox = new VBox(50);
-		Button tower1 = new Button("Tower1");
-		Button tower2 = new Button("Tower2");
-		Button tower3 = new Button("Tower3");
-		Button tower4 = new Button("Tower4");
-		Button tower5 = new Button("Tower5");
-		Button tower6 = new Button("Tower6");
-		towerBox.getChildren().add(tower1);
-		towerBox.getChildren().add(tower2);
-		towerBox.getChildren().add(tower3);
-		towerBox.getChildren().add(tower4);
-		towerBox.getChildren().add(tower5);
-		towerBox.getChildren().add(tower6);
-		tower1.setOnAction(e -> {	
+		//main tower Vbox
+		VBox mainTowerBox = new VBox(30);
+		
+		//individual tower Vboxes
+		VBox towerBox1 = new VBox(5);
+		VBox towerBox2 = new VBox(5);
+		VBox towerBox3 = new VBox(5);
+		VBox towerBox4 = new VBox(5);
+		VBox towerBox5 = new VBox(5);
+		VBox towerBox6 = new VBox(5);
+		
+		//each tower button
+		Button towerButton1 = new Button("Tower1");
+		Button towerButton2 = new Button("Tower2");
+		Button towerButton3 = new Button("Tower3");
+		Button towerButton4 = new Button("Tower4");
+		Button towerButton5 = new Button("Tower5");
+		Button towerButton6 = new Button("Tower6");
+		
+		//each label cost
+		Label towerCost1 = new Label("Cost: 100");
+		Label towerCost2 = new Label("Cost: 200");
+		Label towerCost3 = new Label("Cost: 300");
+		Label towerCost4 = new Label("Cost: 400");
+		Label towerCost5 = new Label("Cost: 500");
+		Label towerCost6 = new Label("Cost: 600");
+		
+		//adds tower button and cost label to a vbox
+		towerBox1.getChildren().addAll(towerButton1, towerCost1);	
+		towerBox2.getChildren().addAll(towerButton2, towerCost2);
+		towerBox3.getChildren().addAll(towerButton3, towerCost3);
+		towerBox4.getChildren().addAll(towerButton4, towerCost4);
+		towerBox5.getChildren().addAll(towerButton5, towerCost5);
+		towerBox6.getChildren().addAll(towerButton6, towerCost6);
+		mainTowerBox.getChildren().addAll(towerBox1, towerBox2, towerBox3, towerBox4, towerBox5, towerBox6);
+		
+		//event handlers for each tower button
+		towerButton1.setOnAction(e -> {	
 			controller.set_last_clicked_tower("1");
 		});
-		tower2.setOnAction(e -> {	
+		towerButton2.setOnAction(e -> {	
 			controller.set_last_clicked_tower("2");
 		});
-		tower3.setOnAction(e -> {	
+		towerButton3.setOnAction(e -> {	
 			controller.set_last_clicked_tower("3");
 		});
-		tower4.setOnAction(e -> {	
+		towerButton4.setOnAction(e -> {	
 			controller.set_last_clicked_tower("4");
 		});
-		tower5.setOnAction(e -> {	
+		towerButton5.setOnAction(e -> {	
 			controller.set_last_clicked_tower("5");
 		});
-		tower6.setOnAction(e -> {	
+		towerButton6.setOnAction(e -> {	
 			controller.set_last_clicked_tower("6");
 		});
-		vBox.getChildren().add(towerBox);
+		vBox.getChildren().add(mainTowerBox);
 	}
 	
 	
