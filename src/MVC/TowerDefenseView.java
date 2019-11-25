@@ -1,9 +1,18 @@
 package MVC;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
 import Networking.TowerDefenseMessge;
+import Tower.Tower;
+import Tower.Tower1;
+import Tower.Tower2;
+import Tower.Tower3;
+import Tower.Tower4;
+import Tower.Tower5;
+import Tower.Tower6;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -62,11 +71,11 @@ public class TowerDefenseView extends Application implements Observer{
 		gridPane.setOnMouseClicked(e -> {
 			int x = (int) e.getX();
 			int y = (int) e.getY();
-			if(controller.is_tower_here(x, y) == false) { //no tower at location
-				if(controller.getLCT() != null) { //last clicked not null
-					controller.placeTower(x, y);
+			//if(controller.is_tower_here(x, y) == false) { //no tower at location
+			if(controller.getLCT() != null) { //last clicked not null
+				controller.placeTower(x, y);
 				}
-			}
+			//}
 		});
 		gridPane.setVgap(5);
 		gridPane.setHgap(5);
@@ -133,6 +142,44 @@ public class TowerDefenseView extends Application implements Observer{
 		//main tower Vbox
 		VBox mainTowerBox = new VBox(30);
 		
+		List<Tower> towerList = new ArrayList<Tower>();
+		Tower t = new Tower1();
+		towerList.add(t);
+		t = new Tower2();
+		towerList.add(t);
+		t = new Tower3();
+		towerList.add(t);
+		t = new Tower4();
+		towerList.add(t);
+		t = new Tower5();
+		towerList.add(t);
+		t = new Tower6();
+		towerList.add(t);
+		
+		for (int i = 0; i < towerList.size(); i++) {
+			final String index = i+1+"";
+			Tower tower = towerList.get(i);
+			VBox towerBox = new VBox(5);
+			Button towerButton = new Button(tower.getName());
+			Label towerCost = new Label("Cost: "+tower.getCost());
+			towerBox.getChildren().addAll(towerButton, towerCost);	
+			mainTowerBox.getChildren().addAll(towerBox);
+			towerButton.setOnAction(e -> {	
+				controller.set_last_clicked_tower(index);
+			});
+		}
+		
+		VBox towerBox = new VBox(5);
+		Button towerButton = new Button("sell");
+		Label towerCost = new Label("get 75%");
+		towerBox.getChildren().addAll(towerButton, towerCost);	
+		mainTowerBox.getChildren().addAll(towerBox);
+		towerButton.setOnAction(e -> {	
+			controller.set_last_clicked_tower("sell");
+		});
+		vBox.getChildren().add(mainTowerBox);
+	}
+		/*
 		//individual tower Vboxes
 		VBox towerBox1 = new VBox(5);
 		VBox towerBox2 = new VBox(5);
@@ -187,7 +234,7 @@ public class TowerDefenseView extends Application implements Observer{
 		});
 		vBox.getChildren().add(mainTowerBox);
 	}
-	
+	*/
 	
 	
 	//Event handlers methods
@@ -215,11 +262,27 @@ public class TowerDefenseView extends Application implements Observer{
 	@Override
 	public void update(Observable o, Object arg) {
 		TowerDefenseMessge message = (TowerDefenseMessge) arg;
-		Rectangle rec = new Rectangle();
-		rec.setFill(Color.RED);
-		rec.setWidth(45);
-		rec.setHeight(45);
-		gridPane.add(rec, message.getCol(), message.getRow());
+		/*
+		Image image = new Image("file:image/456.jpg");
+		ImageView imageView = new ImageView();
+		imageView.setImage(image);
+		imageView.setFitHeight(45);
+		imageView.setFitWidth(45);
+		gridPane.add(imageView, message.getCol(), message.getRow());
+		*/
+		if (message.getColor()==2) {
+			Rectangle rec = new Rectangle();
+			rec.setFill(Color.RED);
+			rec.setWidth(45);
+			rec.setHeight(45);
+			gridPane.add(rec, message.getCol(), message.getRow());
+		}else if(message.getColor()==3) {
+			Rectangle rec = new Rectangle();
+			rec.setFill(Color.GREEN);
+			rec.setWidth(45);
+			rec.setHeight(45);
+			gridPane.add(rec, message.getCol(), message.getRow());
+		}
 //		System.out.println(Integer.toString(controller.getBalance()));
 		moneyBalance.setText(Integer.toString(controller.getBalance()));
 		System.out.println("col: " + message.getCol());

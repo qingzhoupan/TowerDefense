@@ -6,9 +6,9 @@ public class Tower2 extends Tower {
 		super();
 		this.damage = 2;
 		this.cost = 200;
-		this.soldPrice = 1;
 		this.range = 2;
 		this.exist = true;
+		this.name = "Tower 2";
 	}
 
 	public  void upgrade() {

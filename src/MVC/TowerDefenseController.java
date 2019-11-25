@@ -30,7 +30,13 @@ public class TowerDefenseController {
 	public void placeTower(int x, int y) {
 		int col = x/50;
 		int row = y/50;
-		model.placeTower(row, col);
+		if (is_tower_here(x, y)) {
+			if (!model.getLCT().isExist()) {
+				model.sellTower(row, col);
+			}
+		}else {
+			model.placeTower(row, col);
+		}
 		model.setLCT(null);
 	}
 	
@@ -54,6 +60,9 @@ public class TowerDefenseController {
 		}else if(towerType.equals("6")) {
 			Tower tower6 = new Tower6();
 			model.setLCT(tower6);
+		}else if(towerType.equals("sell")) {
+			Tower tower = new TowerDestory();
+			model.setLCT(tower);
 		}
 		
 	}

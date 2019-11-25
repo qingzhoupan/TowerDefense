@@ -38,6 +38,22 @@ public class TowerDefenseModel extends Observable{
 		}
 	}
 	
+	/**
+	 * sell the tower and notify the observer
+	 * @param row coordinate of row.
+	 * @param col coordinate of col.
+	 */
+	public void sellTower(int row, int col) {
+		if((this.balance - LAST_CLICKED_TOWER.getCost()) >= 0) { //checks negative balance
+			Tower tower = (Tower)board[row][col];
+			this.balance += tower.getSoldPrice();
+			System.out.println("balance" + this.balance);
+			TowerDefenseMessge message = new TowerDefenseMessge(row, col, 3);
+			setChanged();
+			notifyObservers(message);
+		}
+	}
+	
 
 	public int getRow() {
 		return this.ROW;
