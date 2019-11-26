@@ -4,15 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
-
 import Networking.TowerDefenseMessge;
-import Tower.Tower;
-import Tower.Tower1;
-import Tower.Tower2;
-import Tower.Tower3;
-import Tower.Tower4;
-import Tower.Tower5;
-import Tower.Tower6;
+import Tower.*;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -50,6 +43,7 @@ public class TowerDefenseView extends Application implements Observer{
 		createRightContainer(window);
 		stage.setScene(scene);
 		stage.show();
+		controller.createPath(); //creates path after showing stage.
 	}
 
 	
@@ -75,7 +69,6 @@ public class TowerDefenseView extends Application implements Observer{
 			if(controller.getLCT() != null) { //last clicked not null
 				controller.placeTower(x, y);
 				}
-			//}
 		});
 		gridPane.setVgap(5);
 		gridPane.setHgap(5);
@@ -179,63 +172,6 @@ public class TowerDefenseView extends Application implements Observer{
 		});
 		vBox.getChildren().add(mainTowerBox);
 	}
-		/*
-		//individual tower Vboxes
-		VBox towerBox1 = new VBox(5);
-		VBox towerBox2 = new VBox(5);
-		VBox towerBox3 = new VBox(5);
-		VBox towerBox4 = new VBox(5);
-		VBox towerBox5 = new VBox(5);
-		VBox towerBox6 = new VBox(5);
-		
-		//each tower button
-		Button towerButton1 = new Button("Tower1");
-		Button towerButton2 = new Button("Tower2");
-		Button towerButton3 = new Button("Tower3");
-		Button towerButton4 = new Button("Tower4");
-		Button towerButton5 = new Button("Tower5");
-		Button towerButton6 = new Button("Tower6");
-		
-		//each label cost
-		Label towerCost1 = new Label("Cost: 100");
-		Label towerCost2 = new Label("Cost: 200");
-		Label towerCost3 = new Label("Cost: 300");
-		Label towerCost4 = new Label("Cost: 400");
-		Label towerCost5 = new Label("Cost: 500");
-		Label towerCost6 = new Label("Cost: 600");
-		
-		//adds tower button and cost label to a vbox
-		towerBox1.getChildren().addAll(towerButton1, towerCost1);	
-		towerBox2.getChildren().addAll(towerButton2, towerCost2);
-		towerBox3.getChildren().addAll(towerButton3, towerCost3);
-		towerBox4.getChildren().addAll(towerButton4, towerCost4);
-		towerBox5.getChildren().addAll(towerButton5, towerCost5);
-		towerBox6.getChildren().addAll(towerButton6, towerCost6);
-		mainTowerBox.getChildren().addAll(towerBox1, towerBox2, towerBox3, towerBox4, towerBox5, towerBox6);
-		
-		//event handlers for each tower button
-		towerButton1.setOnAction(e -> {	
-			controller.set_last_clicked_tower("1");
-		});
-		towerButton2.setOnAction(e -> {	
-			controller.set_last_clicked_tower("2");
-		});
-		towerButton3.setOnAction(e -> {	
-			controller.set_last_clicked_tower("3");
-		});
-		towerButton4.setOnAction(e -> {	
-			controller.set_last_clicked_tower("4");
-		});
-		towerButton5.setOnAction(e -> {	
-			controller.set_last_clicked_tower("5");
-		});
-		towerButton6.setOnAction(e -> {	
-			controller.set_last_clicked_tower("6");
-		});
-		vBox.getChildren().add(mainTowerBox);
-	}
-	*/
-	
 	
 	//Event handlers methods
 	private void startNewGame(MenuItem pause, MenuItem speedUp) {
@@ -270,20 +206,27 @@ public class TowerDefenseView extends Application implements Observer{
 		imageView.setFitWidth(45);
 		gridPane.add(imageView, message.getCol(), message.getRow());
 		*/
-		if (message.getColor()==2) {
+		if (message.getColor()==2) { //tower
 			Rectangle rec = new Rectangle();
 			rec.setFill(Color.RED);
 			rec.setWidth(45);
 			rec.setHeight(45);
 			gridPane.add(rec, message.getCol(), message.getRow());
-		}else if(message.getColor()==3) {
+		}else if(message.getColor()==3) { //original board
 			Rectangle rec = new Rectangle();
 			rec.setFill(Color.GREEN);
 			rec.setWidth(45);
 			rec.setHeight(45);
 			gridPane.add(rec, message.getCol(), message.getRow());
 		}
-//		System.out.println(Integer.toString(controller.getBalance()));
+		else if(message.getColor() == 4) { //path
+			Rectangle rec = new Rectangle();
+			rec.setFill(Color.BROWN);
+			rec.setWidth(45);
+			rec.setHeight(45);
+			gridPane.add(rec, message.getCol(), message.getRow());
+				
+		}
 		moneyBalance.setText(Integer.toString(controller.getBalance()));
 		System.out.println("col: " + message.getCol());
 		System.out.println("row: " + message.getRow());

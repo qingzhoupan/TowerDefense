@@ -1,12 +1,5 @@
 package MVC;
 import Tower.*; //imports Tower package
-//import Tower.Tower;
-//import Tower.Tower1;
-//import Tower.Tower2;
-//import Tower.Tower3;
-//import Tower.Tower4;
-//import Tower.Tower5;
-//import Tower.Tower6;
 
 public class TowerDefenseController {
 	
@@ -81,6 +74,10 @@ public class TowerDefenseController {
 			return false;
 		}
 		return true;
+	}
+	
+	public void createPath() {
+		model.createPath();
 	}
 	
 	public void buyTower(Tower tower) {

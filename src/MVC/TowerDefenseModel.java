@@ -4,6 +4,7 @@ import java.util.Observable;
 
 import Networking.TowerDefenseMessge;
 import Tower.Tower;
+import Stage.*;
 
 public class TowerDefenseModel extends Observable{
 	
@@ -17,9 +18,7 @@ public class TowerDefenseModel extends Observable{
 	public TowerDefenseModel() {
 		board = new Object [ROW][COL];
 		this.balance = 1000;
-
 	}
-	
 	
 	/**
 	 * Places tower and notifies the observer if the cost is in the budget.
@@ -54,6 +53,23 @@ public class TowerDefenseModel extends Observable{
 		}
 	}
 	
+	public void createPath() {
+		Stage1 stage1 = new Stage1();
+		board = stage1.createPath();
+		for(int i = 0; i < ROW; i++) {
+			for(int j = 0; j < COL; j++) {
+				if(board[i][j] != null) {
+					TowerDefenseMessge message = new TowerDefenseMessge(i, j, 4);
+					System.out.println("model");
+					setChanged();
+					notifyObservers(message);
+				}
+				//System.out.print(board[i][j]);
+			}
+			//System.out.println();
+		}
+	}
+	
 
 	public int getRow() {
 		return this.ROW;
@@ -71,12 +87,16 @@ public class TowerDefenseModel extends Observable{
 		return this.LAST_CLICKED_TOWER;
 	}
 	
-	public void setLCT(Tower tower) {
-		this.LAST_CLICKED_TOWER = tower;
-	}
-	
 	public int getBalance() {
 		return this.balance;
+	}
+	
+	public Object[][] getBoard() {
+		return this.board;
+	}
+	
+	public void setLCT(Tower tower) {
+		this.LAST_CLICKED_TOWER = tower;
 	}
 	
 

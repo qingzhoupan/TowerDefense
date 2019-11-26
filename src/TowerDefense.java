@@ -1,5 +1,3 @@
-import Enemies.Enemies;
-import Enemies.Enemy1;
 import MVC.TowerDefenseView;
 import javafx.application.Application;
 
