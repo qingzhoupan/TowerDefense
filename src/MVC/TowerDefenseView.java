@@ -4,9 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Timer;
+
 import Networking.TowerDefenseMessge;
 import Tower.*;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.animation.TranslateTransition;
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -21,12 +28,17 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 public class TowerDefenseView extends Application implements Observer{
 
 	public TowerDefenseController controller;
 	private GridPane gridPane = new GridPane();
 	private Label moneyBalance;
+	private Timeline timeline;
+	private int SECS;
+	private long waveInterval = 5;
+
 	
 	public TowerDefenseView() {
 		controller = new TowerDefenseController(this);
@@ -98,16 +110,17 @@ public class TowerDefenseView extends Application implements Observer{
 		MenuBar menuBar = new MenuBar();
 		Menu menu = new Menu("Menu");
 		MenuItem newGame = new MenuItem("New Game");
+		MenuItem startGame = new MenuItem("Start Game");
 		MenuItem pause = new MenuItem("Pause");
 		MenuItem speedUp = new MenuItem("Speed++");
 		pause.setDisable(true); //disable until new game is clicked
 		speedUp.setDisable(true); // disable until new game is clicked
 		
 		//event handler
-		newGame.setOnAction(event->{
-			startNewGame(pause, speedUp); //parameters used when new game
+		startGame.setOnAction(event->{
+			startNewGame(startGame, pause, speedUp); //parameters used when new game
 		});
-		menu.getItems().addAll(newGame, pause, speedUp);
+		menu.getItems().addAll(newGame, startGame, pause, speedUp);
 		menuBar.getMenus().add(menu);
 		VBox menuBox = new VBox(menuBar);
 		vBox.getChildren().add(menuBox);
@@ -174,7 +187,10 @@ public class TowerDefenseView extends Application implements Observer{
 	}
 	
 	//Event handlers methods
-	private void startNewGame(MenuItem pause, MenuItem speedUp) {
+	private void startNewGame(MenuItem startGame, MenuItem pause, MenuItem speedUp) {
+		pause.setDisable(false);
+		speedUp.setDisable(false);
+		startTimer();
 		pause.setOnAction(event->{
 			pauseGame();
 		});
@@ -193,6 +209,34 @@ public class TowerDefenseView extends Application implements Observer{
 		
 	}
 	
+//	new Timeline(new KeyFrame(
+//	        Duration.millis(2500),ae -> doSomething())).play();
+//	
+	
+	private void startTimer() {
+		int count = 10;
+		Timeline timeline = new Timeline(new KeyFrame(
+		        Duration.seconds(1), e -> incrementSec(count)));
+		timeline.setCycleCount(timeline.INDEFINITE);
+		timeline.setAutoReverse(false);
+		timeline.play();
+	}
+	
+	private void incrementSec(int count) {
+		System.out.println("INCRE");
+		SECS++;
+		System.out.println(SECS);
+		while(SECS == waveInterval) {
+			TranslateTransition translateTransition = new TranslateTransition();
+			translateTransition.setDuration(Duration.millis(2000));
+			translateTransition.setNode(Circle.PINK);
+			translateTransition.setByX(400);
+			translateTransition.setCycleCount(5);
+			translateTransition.setAutoReverse(true);
+			translateTransition.play(); 
+			timeline.pause();
+		}
+	}
 	
 	
 	@Override
