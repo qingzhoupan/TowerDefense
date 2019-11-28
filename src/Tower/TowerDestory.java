@@ -1,18 +1,40 @@
 package Tower;
 
-public class TowerDestory extends Tower {
-
-	public TowerDestory() {
-		super();
-		this.damage = 0;
-		this.cost = 0;
-		this.range = 0;
-		this.exist = false;
-		this.name = "Tower Destoried";
+public class TowerDestory extends Tower{
+	private int x;
+	private int y;
+	private int cost;
+	
+	
+	public int getSellX() {
+		return x;
 	}
 
-	public  void upgrade() {
-		this.damage *= 2;
+	public int getSellY() {
+		return y;
 	}
+	
+	
+
+	public TowerDestory(int x, int y) {
+		this.x = x;
+		this.y = y;
+	}
+
+
+	public void setCost(int credit) {
+		this.cost = credit;
+	}
+	
+	public int getCost() {
+		return this.cost;
+	}
+
+	@Override
+	public void upgrade() {
+		
+	}
+
+	
 	
 } 

@@ -35,10 +35,14 @@ public class TowerDefenseView extends Application implements Observer{
 	public TowerDefenseController controller;
 	private GridPane gridPane = new GridPane();
 	private Label moneyBalance;
+<<<<<<< HEAD
 	private Timeline timeline;
 	private int SECS;
 	private long waveInterval = 5;
 
+=======
+	private TowerDestory sellTower;
+>>>>>>> 16e5435874fb08e05274b85cf8fb7d3c8aaa4e46
 	
 	public TowerDefenseView() {
 		controller = new TowerDefenseController(this);
@@ -55,7 +59,7 @@ public class TowerDefenseView extends Application implements Observer{
 		createRightContainer(window);
 		stage.setScene(scene);
 		stage.show();
-		controller.createPath(); //creates path after showing stage.
+//		controller.createPath(); //creates path after showing stage.
 	}
 
 	
@@ -68,7 +72,11 @@ public class TowerDefenseView extends Application implements Observer{
 		for(int i = 0; i < controller.getCol(); i++) {
 			for(int j = 0; j < controller.getRow(); j++) {
 				Rectangle rec = new Rectangle();
-				rec.setFill(Color.GREEN);
+				if(controller.get_intBoard()[j][i] == 1) {
+					rec.setFill(Color.YELLOW);
+				}else {
+					rec.setFill(Color.GREEN);
+				}
 				rec.setWidth(45);
 				rec.setHeight(45);
 				gridPane.add(rec, i, j);
@@ -77,10 +85,26 @@ public class TowerDefenseView extends Application implements Observer{
 		gridPane.setOnMouseClicked(e -> {
 			int x = (int) e.getX();
 			int y = (int) e.getY();
-			//if(controller.is_tower_here(x, y) == false) { //no tower at location
-			if(controller.getLCT() != null) { //last clicked not null
-				controller.placeTower(x, y);
+//			System.out.println(controller.getLCT());
+			
+			if(!controller.is_tower_here(x, y)) {
+				if(controller.getLCT() != null) {
+					controller.placeTower(x, y);
+				} else {
+					// lct is null, nothing happen
 				}
+			} else {
+				if (controller.getLCT() == null) {
+					sellTower = new TowerDestory(x, y);
+					Tower temp = controller.getTowerAt(x, y);
+					int credit = temp.getSoldPrice();
+					sellTower.setCost(credit);
+					controller.setLCT(sellTower);
+					
+				}else {
+					controller.setLCT_null();
+				}	
+			}
 		});
 		gridPane.setVgap(5);
 		gridPane.setHgap(5);
@@ -171,17 +195,20 @@ public class TowerDefenseView extends Application implements Observer{
 			towerBox.getChildren().addAll(towerButton, towerCost);	
 			mainTowerBox.getChildren().addAll(towerBox);
 			towerButton.setOnAction(e -> {	
-				controller.set_last_clicked_tower(index);
+				controller.new_tower_to_LCT(index);
 			});
 		}
 		
 		VBox towerBox = new VBox(5);
-		Button towerButton = new Button("sell");
-		Label towerCost = new Label("get 75%");
-		towerBox.getChildren().addAll(towerButton, towerCost);	
+		Button sellButton = new Button("sell");
+		Label sellReturn = new Label("get 75%");
+		towerBox.getChildren().addAll(sellButton, sellReturn);
 		mainTowerBox.getChildren().addAll(towerBox);
-		towerButton.setOnAction(e -> {	
-			controller.set_last_clicked_tower("sell");
+		sellButton.setOnMouseClicked(e -> {
+			int x = sellTower.getSellX();
+			int y = sellTower.getSellY();
+			controller.sellTower(x, y);
+			
 		});
 		vBox.getChildren().add(mainTowerBox);
 	}
@@ -250,22 +277,18 @@ public class TowerDefenseView extends Application implements Observer{
 		imageView.setFitWidth(45);
 		gridPane.add(imageView, message.getCol(), message.getRow());
 		*/
-		if (message.getColor()==2) { //tower
-			Rectangle rec = new Rectangle();
-			rec.setFill(Color.RED);
-			rec.setWidth(45);
-			rec.setHeight(45);
-			gridPane.add(rec, message.getCol(), message.getRow());
-		}else if(message.getColor()==3) { //original board
-			Rectangle rec = new Rectangle();
+		if (message.getColor() == 0) { // Grass
+			System.out.println("sell");
+			
+ 			Rectangle rec = new Rectangle();
 			rec.setFill(Color.GREEN);
 			rec.setWidth(45);
 			rec.setHeight(45);
 			gridPane.add(rec, message.getCol(), message.getRow());
 		}
-		else if(message.getColor() == 4) { //path
+		else if(message.getColor() == 2) { // Tower
 			Rectangle rec = new Rectangle();
-			rec.setFill(Color.BROWN);
+			rec.setFill(Color.RED);
 			rec.setWidth(45);
 			rec.setHeight(45);
 			gridPane.add(rec, message.getCol(), message.getRow());

@@ -3,9 +3,10 @@ package Tower;
 public abstract class Tower {
 	protected int damage;
 	protected int cost;
-	//protected int soldPrice = (int) 0.75 * cost;
+//	protected int soldPrice = (int) 0.75 * cost;
 	protected int range;
 	protected boolean exist;
+	protected String index;
 	protected String name;
 	
 	public abstract void upgrade();
@@ -45,8 +46,12 @@ public abstract class Tower {
 	public boolean isExist() {
 		return this.exist;
 	}
+	public String getIndex() {
+		return index;
+	}
 	public String getName() {
 		return name;
 	}
+	
 	
 } 

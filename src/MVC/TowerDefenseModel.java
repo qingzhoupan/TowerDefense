@@ -4,19 +4,22 @@ import java.util.Observable;
 
 import Networking.TowerDefenseMessge;
 import Tower.Tower;
-import Stage.*;
 
 public class TowerDefenseModel extends Observable{
 	
-	private final int ROW = 15; //this is temporary
-	private final int COL = 15; //this is temporary
+	private int ROW; //this is temporary
+	private int COL; //this is temporary
+
+	private TowerDefenseCell objBoard [][];
+	private int intBoard[][];				// [0-Grass] [1-Road] [2-Tower] [3-Enemy]
 	
-	private Object board [][];
 	private Tower LAST_CLICKED_TOWER; 
 	private int balance;
 	
+	
 	public TowerDefenseModel() {
-		board = new Object [ROW][COL];
+		objBoard =   new TowerDefenseCell [ROW][COL];
+		intBoard = new int [ROW][COL];
 		this.balance = 1000;
 	}
 	
@@ -27,10 +30,9 @@ public class TowerDefenseModel extends Observable{
 	 */
 	public void placeTower(int row, int col) {
 		if((this.balance - LAST_CLICKED_TOWER.getCost()) >= 0) { //checks negative balance
-			board[row][col] = LAST_CLICKED_TOWER;
-			System.out.println(LAST_CLICKED_TOWER.getCost());
+			objBoard[row][col].add(LAST_CLICKED_TOWER);
+			intBoard[row][col] = 2;
 			this.balance -= LAST_CLICKED_TOWER.getCost();
-			System.out.println("balance" + this.balance);
 			TowerDefenseMessge message = new TowerDefenseMessge(row, col, 2);
 			setChanged();
 			notifyObservers(message);
@@ -44,60 +46,73 @@ public class TowerDefenseModel extends Observable{
 	 */
 	public void sellTower(int row, int col) {
 		if((this.balance - LAST_CLICKED_TOWER.getCost()) >= 0) { //checks negative balance
-			Tower tower = (Tower)board[row][col];
-			this.balance += tower.getSoldPrice();
+			objBoard[row][col].setToEmpty();
+			intBoard[row][col] = 0;
+			this.balance += LAST_CLICKED_TOWER.getCost();
+			LAST_CLICKED_TOWER = null;
 			System.out.println("balance" + this.balance);
-			TowerDefenseMessge message = new TowerDefenseMessge(row, col, 3);
+			System.out.println("sellTower" + row +" "+col);
+			TowerDefenseMessge message = new TowerDefenseMessge(row, col, 0);
 			setChanged();
 			notifyObservers(message);
 		}
 	}
-	
-	public void createPath() {
-		Stage1 stage1 = new Stage1();
-		board = stage1.createPath();
-		for(int i = 0; i < ROW; i++) {
-			for(int j = 0; j < COL; j++) {
-				if(board[i][j] != null) {
-					TowerDefenseMessge message = new TowerDefenseMessge(i, j, 4);
-					System.out.println("model");
-					setChanged();
-					notifyObservers(message);
-				}
-				//System.out.print(board[i][j]);
-			}
-			//System.out.println();
-		}
-	}
-	
 
 	public int getRow() {
-		return this.ROW;
+		return ROW;
 	}
+	public void setRow(int row) {
+		this.ROW = row;
+	}
+
 	
 	public int getCol() {
-		return this.COL;
+		return COL;
+	}
+	public void setCol(int col) {
+		this.COL = col;
 	}
 	
-	public Object getPos(int row, int col) {
-		return board[row][col];
+	
+	// objBoard setters and getters
+	public Object[][] get_objBoard() {
+		return this.objBoard;
+	}
+	public TowerDefenseCell get_objBoard_pos(int row, int col) {
+		return objBoard[row][col];
+	}
+	public void set_objBoard_pos(int row, int col, TowerDefenseCell cell) {
+		objBoard[row][col] = cell;
 	}
 	
-	public Tower getLCT() {
+	
+	// intBoard setters and getters
+	public int[][] get_intBoard() {
+		return this.intBoard;
+	}
+	public int get_intBoard_pos(int row, int col) {
+		return intBoard[row][col];
+	}
+	public void set_intBoard_pos(int row, int col, int i) {
+		intBoard[row][col] = i;
+	}
+	
+	
+	
+	public Tower getLCT() {	
 		return this.LAST_CLICKED_TOWER;
+	}
+	public void setLCT(Tower tower) {	
+		this.LAST_CLICKED_TOWER = tower;
 	}
 	
 	public int getBalance() {
 		return this.balance;
 	}
 	
-	public Object[][] getBoard() {
-		return this.board;
-	}
 	
-	public void setLCT(Tower tower) {
-		this.LAST_CLICKED_TOWER = tower;
-	}
+	
+	
 	
 
 	public void boardInformation() {
@@ -105,7 +120,10 @@ public class TowerDefenseModel extends Observable{
 		//enemy real time location? 
 	}
 
-
-	
+	public void init_Board() {
+		this.objBoard = new TowerDefenseCell[ROW][COL];	
+		this.intBoard = new int[ROW][COL];
+		
+	}
 
 }

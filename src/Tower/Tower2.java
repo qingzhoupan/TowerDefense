@@ -8,6 +8,7 @@ public class Tower2 extends Tower {
 		this.cost = 200;
 		this.range = 2;
 		this.exist = true;
+		this.index = "2";
 		this.name = "Tower 2";
 	}
 
