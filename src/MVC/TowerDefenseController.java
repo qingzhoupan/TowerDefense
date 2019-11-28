@@ -24,7 +24,7 @@ public class TowerDefenseController {
 	private void createStage() {
 		Scanner input = null;
 		try {
-			input = new Scanner(new File("map2.txt"));
+			input = new Scanner(new File("map1.txt"));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}

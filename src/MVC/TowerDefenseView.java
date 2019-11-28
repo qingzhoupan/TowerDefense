@@ -266,42 +266,38 @@ public class TowerDefenseView extends Application implements Observer{
 	
 	
 	@Override
-	public void update(Observable o, Object arg) {
-		TowerDefenseMessge message = (TowerDefenseMessge) arg;
-		/*
-		Image image = new Image("file:image/456.jpg");
-		ImageView imageView = new ImageView();
-		imageView.setImage(image);
-		imageView.setFitHeight(45);
-		imageView.setFitWidth(45);
-		gridPane.add(imageView, message.getCol(), message.getRow());
-		*/
-		if (message.getColor()==2) { //tower
-			Rectangle rec = new Rectangle();
-			rec.setFill(Color.RED);
-			rec.setWidth(45);
-			rec.setHeight(45);
-			gridPane.add(rec, message.getCol(), message.getRow());
-		}else if(message.getColor()==3) { //original board
-			Rectangle rec = new Rectangle();
-			rec.setFill(Color.GREEN);
-			rec.setWidth(45);
-			rec.setHeight(45);
-			gridPane.add(rec, message.getCol(), message.getRow());
-		}
-		else if(message.getColor() == 4) { //path
-			Rectangle rec = new Rectangle();
-			rec.setFill(Color.BROWN);
-			rec.setWidth(45);
-			rec.setHeight(45);
-			gridPane.add(rec, message.getCol(), message.getRow());
-				
-		}
-		moneyBalance.setText(Integer.toString(controller.getBalance()));
-		System.out.println("col: " + message.getCol());
-		System.out.println("row: " + message.getRow());
-		
-	}
+	 public void update(Observable o, Object arg) {
+	  TowerDefenseMessge message = (TowerDefenseMessge) arg;
+	  /*
+	  Image image = new Image("file:image/456.jpg");
+	  ImageView imageView = new ImageView();
+	  imageView.setImage(image);
+	  imageView.setFitHeight(45);
+	  imageView.setFitWidth(45);
+	  gridPane.add(imageView, message.getCol(), message.getRow());
+	  */
+	  if (message.getColor() == 0) { // Grass
+	   System.out.println("sell");
+	   
+	    Rectangle rec = new Rectangle();
+	   rec.setFill(Color.GREEN);
+	   rec.setWidth(45);
+	   rec.setHeight(45);
+	   gridPane.add(rec, message.getCol(), message.getRow());
+	  }
+	  else if(message.getColor() == 2) { // Tower
+	   Rectangle rec = new Rectangle();
+	   rec.setFill(Color.RED);
+	   rec.setWidth(45);
+	   rec.setHeight(45);
+	   gridPane.add(rec, message.getCol(), message.getRow());
+	    
+	  }
+	  moneyBalance.setText(Integer.toString(controller.getBalance()));
+	  System.out.println("col: " + message.getCol());
+	  System.out.println("row: " + message.getRow());
+	  
+	 }
 
 	
 
