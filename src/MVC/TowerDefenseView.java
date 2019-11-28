@@ -24,6 +24,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
@@ -34,15 +35,12 @@ public class TowerDefenseView extends Application implements Observer{
 
 	public TowerDefenseController controller;
 	private GridPane gridPane = new GridPane();
+	private TowerDestory sellTower;
 	private Label moneyBalance;
-<<<<<<< HEAD
 	private Timeline timeline;
 	private int SECS;
 	private long waveInterval = 5;
 
-=======
-	private TowerDestory sellTower;
->>>>>>> 16e5435874fb08e05274b85cf8fb7d3c8aaa4e46
 	
 	public TowerDefenseView() {
 		controller = new TowerDefenseController(this);
@@ -59,7 +57,6 @@ public class TowerDefenseView extends Application implements Observer{
 		createRightContainer(window);
 		stage.setScene(scene);
 		stage.show();
-//		controller.createPath(); //creates path after showing stage.
 	}
 
 	
@@ -253,10 +250,12 @@ public class TowerDefenseView extends Application implements Observer{
 		System.out.println("INCRE");
 		SECS++;
 		System.out.println(SECS);
+		Circle circle = new Circle();
+		circle.setFill(Color.PINK);
 		while(SECS == waveInterval) {
 			TranslateTransition translateTransition = new TranslateTransition();
 			translateTransition.setDuration(Duration.millis(2000));
-			translateTransition.setNode(Circle.PINK);
+			translateTransition.setNode(circle);
 			translateTransition.setByX(400);
 			translateTransition.setCycleCount(5);
 			translateTransition.setAutoReverse(true);
@@ -277,18 +276,22 @@ public class TowerDefenseView extends Application implements Observer{
 		imageView.setFitWidth(45);
 		gridPane.add(imageView, message.getCol(), message.getRow());
 		*/
-		if (message.getColor() == 0) { // Grass
-			System.out.println("sell");
-			
- 			Rectangle rec = new Rectangle();
+		if (message.getColor()==2) { //tower
+			Rectangle rec = new Rectangle();
+			rec.setFill(Color.RED);
+			rec.setWidth(45);
+			rec.setHeight(45);
+			gridPane.add(rec, message.getCol(), message.getRow());
+		}else if(message.getColor()==3) { //original board
+			Rectangle rec = new Rectangle();
 			rec.setFill(Color.GREEN);
 			rec.setWidth(45);
 			rec.setHeight(45);
 			gridPane.add(rec, message.getCol(), message.getRow());
 		}
-		else if(message.getColor() == 2) { // Tower
+		else if(message.getColor() == 4) { //path
 			Rectangle rec = new Rectangle();
-			rec.setFill(Color.RED);
+			rec.setFill(Color.BROWN);
 			rec.setWidth(45);
 			rec.setHeight(45);
 			gridPane.add(rec, message.getCol(), message.getRow());
