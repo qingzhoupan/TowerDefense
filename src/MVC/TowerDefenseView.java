@@ -28,6 +28,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -122,15 +124,26 @@ public class TowerDefenseView extends Application implements Observer {
 	private void createBoard(BorderPane window) {
 		for (int i = 0; i < controller.getCol(); i++) {
 			for (int j = 0; j < controller.getRow(); j++) {
-				Rectangle rec = new Rectangle();
-				if (controller.get_intBoard()[j][i] == 1) {
-					rec.setFill(Color.YELLOW);
-				} else {
-					rec.setFill(Color.GREEN);
+//				Rectangle rec = new Rectangle();
+//				if (controller.get_intBoard()[j][i] == 1) {
+//					rec.setFill(Color.YELLOW);
+//				} else {
+//					rec.setFill(Color.GREEN);
+//				}
+//				rec.setWidth(45);
+//				rec.setHeight(45);
+				
+				if(controller.get_imagePos() > 0) {
+					Image image = new Image("file:image/map1/" +controller.get_imagePos() + ".jpg"); 
+					ImageView imageView = new ImageView();
+					imageView.setImage(image);
+					imageView.setFitHeight(50);
+					imageView.setFitWidth(50); 
+					
+					gridPane.add(imageView, j, i);
+					controller.update_imagePos();
 				}
-				rec.setWidth(45);
-				rec.setHeight(45);
-				gridPane.add(rec, i, j);
+				
 			}
 		}
 		gridPane.setOnMouseClicked(e -> {
@@ -157,8 +170,8 @@ public class TowerDefenseView extends Application implements Observer {
 				}
 			}
 		});
-		gridPane.setVgap(5);
-		gridPane.setHgap(5);
+		gridPane.setVgap(0.2);
+		gridPane.setHgap(0.2);
 		window.setCenter(gridPane);
 
 	}

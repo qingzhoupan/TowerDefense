@@ -13,6 +13,8 @@ import Tower.Tower;
 
 public class TowerDefenseModel extends Observable{
 	
+	private int imagePos = 225;
+	
 	private int ROW; //this is temporary
 	private int COL; //this is temporary
 	private List<Point> path = new ArrayList<>();
@@ -34,7 +36,14 @@ public class TowerDefenseModel extends Observable{
 		return pathCoord;
 	}
 
+	public int imagePos() {
+		return imagePos;
+	}
 	
+	public void update_imagePos() {
+		imagePos -= 1;
+		
+	}
 
 	public TowerDefenseModel() {
 		objBoard =   new TowerDefenseCell [ROW][COL];
@@ -190,6 +199,8 @@ public class TowerDefenseModel extends Observable{
 	public void setMap(Map<Enemy, Point> map) {
 		this.map = map;
 	}
+
+	
 
 	
 

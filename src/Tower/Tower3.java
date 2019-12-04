@@ -20,6 +20,10 @@ public class Tower3 extends Tower {
 
 	// range left
 	public boolean inRange(Point point) {
+		/*System.out.println("this.towerCOL"+this.towerCOL);
+		System.out.println("point.getCol()"+point.getCol());
+		System.out.println("&this.towerROW"+this.towerROW);
+		System.out.println("point.getRow()+1"+(point.getRow()+1));*/
 		if (point.getCol()==null) {
 			return false;
 		}

@@ -30,7 +30,7 @@ public class TowerDefenseController {
 	private void createStage() {
 		Scanner input = null;
 		try {
-			input = new Scanner(new File("map2.txt"));
+			input = new Scanner(new File("map1.txt"));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -112,10 +112,9 @@ public class TowerDefenseController {
 	public void placeTower(int x, int y) {
 		int col = x / 50;
 		int row = y / 50;
+		System.out.println(model.get_intBoard_pos(row, col));
 		if (!is_tower_here(x, y) && model.get_intBoard_pos(row, col) == 0) {
 			model.placeTower(row, col);
-		} else {
-
 		}
 		model.setLCT(null);
 	}
@@ -298,5 +297,13 @@ public class TowerDefenseController {
 
 	public void removeEnemy(Enemy key) {
 		model.getMap().remove(key);
+	}
+	
+	public int get_imagePos() {
+		return model.imagePos();
+	}
+	
+	public void update_imagePos() {
+		model.update_imagePos();
 	}
 }
