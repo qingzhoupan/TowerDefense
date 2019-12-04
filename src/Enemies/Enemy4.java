@@ -1,6 +1,6 @@
 package Enemies;
 
-public class Enemy4 extends Enemies {
+public class Enemy4 extends Enemy {
 
 	public Enemy4() {
 		super();

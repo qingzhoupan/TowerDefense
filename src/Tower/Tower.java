@@ -1,5 +1,8 @@
 package Tower;
 
+import Enemies.Enemy;
+import MVC.Point;
+
 public abstract class Tower {
 	protected int damage;
 	protected int cost;
@@ -8,12 +11,32 @@ public abstract class Tower {
 	protected boolean exist;
 	protected String index;
 	protected String name;
-	
+	protected int towerROW;
+	protected int towerCOL;
+	private String id;
 	public abstract void upgrade();
+	public abstract boolean inRange(Point point);
 	
 	public int getSoldPrice() {
 		return (int) (0.75 * cost);
 	}
+	
+	public int getTowerROW() {
+		return towerROW;
+	}
+
+	public void setTowerROW(int towerROW) {
+		this.towerROW = towerROW;
+	}
+
+	public int getTowerCOL() {
+		return towerCOL;
+	}
+
+	public void setTowerCOL(int towerCOL) {
+		this.towerCOL = towerCOL;
+	}
+
 	//setters
 	public void setDamage(int damage) {
 		this.damage = damage;
@@ -51,6 +74,13 @@ public abstract class Tower {
 	}
 	public String getName() {
 		return name;
+	}
+	
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
 	}
 	
 	

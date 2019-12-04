@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 import java.util.UUID;
@@ -15,7 +16,7 @@ public class TowerDefenseController {
 
 	TowerDefenseModel model;
 	TowerDefenseView view;
-	private List<Enemies> list;
+	private List<Enemy> list;
 
 	public TowerDefenseController(TowerDefenseView towerDefenseView) {
 		model = new TowerDefenseModel();
@@ -81,10 +82,10 @@ public class TowerDefenseController {
 //		model.getWave().add(enemiesList);
 	}
 
-	public ArrayList<Enemies> helper(String[] wave){
-		ArrayList<Enemies> list = new ArrayList<Enemies>();
+	public ArrayList<Enemy> helper(String[] wave){
+		ArrayList<Enemy> list = new ArrayList<Enemy>();
 		for(int i = 0; i < wave.length; i++) {
-			Enemies enemy = null;
+			Enemy enemy = null;
 			if(wave[i].equals("1")) {
 				enemy = new Enemy1();
 			}else if(wave[i].equals("2")){
@@ -215,13 +216,14 @@ public class TowerDefenseController {
 	}
 
 	public void fps() {
-		// 1 enemy move
+		// set enemies waves
 		if(model.getMap().isEmpty() && !model.getWave().isEmpty()) {
 			list = model.getWave().get(0);
 			model.getWave().remove(0);
 		}
-	
-		for (Enemies enemies : list) {
+//		System.out.println(list);
+		// 1 enemy move
+		for (Enemy enemies : list) {
 			List<Point> path = model.getPath();
 			if (enemies.getCol()==null) {
 				//initEnemy();
@@ -237,17 +239,64 @@ public class TowerDefenseController {
 						if (i==path.size()-1) {
 							// fail destroy enemy TODO
 							model.getMap().remove(enemies);// TODO 
-//							System.out.println(model.getMap());
 						}else {
 							enemies.move(path.get(i+1));
 							model.getMap().put(enemies, point);
+//							System.out.println("Enemy list: " + list);
+//							System.out.println("Tower list: " + model.getTowerList());
 							break;
 						}
 					}
 				}			
 			}
 		}
-		model.fps();
 		
+		for(Tower tower : model.getTowerList()) {
+//			System.out.print(tower);
+			for (Iterator<Enemy> iterator = list.iterator(); iterator.hasNext();) {
+				Enemy enemy = iterator.next();
+				if (tower.inRange(enemy)) {
+					System.out.println("forloop!!!");
+					enemy.beingAttacked(tower.getDamage());
+					if(!enemy.isAlive()) {
+						iterator.remove();
+					}
+				}
+			}
+			/*for(Enemy enemy : list) {
+				if (tower.inRange(enemy)) {
+					System.out.println("forloop!!!");
+					enemy.beingAttacked(tower.getDamage());
+					if(!enemy.isAlive()) {
+						list.remove(enemy);
+					}
+				}
+				
+				if(tower instanceof Tower1) {
+					
+					// in range
+					// attack
+					
+					
+//					System.out.println("tower col: " + (tower.getTowerCOL() + 1));
+//					System.out.println("enemy col: " + enemy.getCol());
+//					System.out.println();
+					if(((tower.getTowerROW() + 1) == enemy.getRow()) && 
+							(tower.getTowerCOL() == enemy.getCol())) {
+						enemy.beingAttacked(tower.getDamage());
+						if(!enemy.isAlive()) {
+							list.remove(enemy);
+						}
+					}
+				}
+				
+				//break;  /// what is this doing for?
+			}*/
+		}
+		model.fps();
+	}
+
+	public void removeEnemy(Enemy key) {
+		model.getMap().remove(key);
 	}
 }

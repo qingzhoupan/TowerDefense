@@ -2,7 +2,7 @@ package Enemies;
 
 import MVC.Point;
 
-public abstract class Enemies extends Point {
+public abstract class Enemy extends Point {
 
 	private String id;
 	
@@ -32,6 +32,9 @@ public abstract class Enemies extends Point {
 		this.speed = speed;
 	}
 	public boolean isAlive() {
+		if(this.hp <= 0) {
+			this.alive = false;
+		}
 		return alive;
 	}
 	public void setAlive(boolean alive) {
@@ -42,6 +45,10 @@ public abstract class Enemies extends Point {
 	}
 	public void setId(String id) {
 		this.id = id;
+	}
+	
+	public void beingAttacked(int damage) {
+		this.hp = this.hp - damage;
 	}
 	
 	

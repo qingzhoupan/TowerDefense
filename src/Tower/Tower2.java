@@ -1,5 +1,8 @@
 package Tower;
 
+import Enemies.Enemy;
+import MVC.Point;
+
 public class Tower2 extends Tower {
 
 	public Tower2() {
@@ -12,9 +15,20 @@ public class Tower2 extends Tower {
 		this.name = "Tower 2";
 	}
 
-	public  void upgrade() {
+	public void upgrade() {
 		this.damage *= 2;
 	}
 
-} 
-
+	// range down
+	public boolean inRange(Point point) {
+		if (point.getCol()==null) {
+			return false;
+		}
+		
+		if (this.towerCOL==point.getCol()&&this.towerROW+1==point.getRow()) {
+			System.out.println("return true");
+			return true;
+		}
+		return false;
+	};
+}

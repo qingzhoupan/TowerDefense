@@ -1,6 +1,6 @@
 package Enemies;
 
-public class Enemy1 extends Enemies {
+public class Enemy1 extends Enemy {
 
 	
 	public Enemy1() {
@@ -10,7 +10,6 @@ public class Enemy1 extends Enemies {
 		this.speed = 1;
 		this.alive = true;
 	}
-	
 
 	
 	

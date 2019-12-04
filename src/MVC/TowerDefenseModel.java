@@ -5,8 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
+import java.util.UUID;
 
-import Enemies.Enemies;
+import Enemies.Enemy;
 import Networking.TowerDefenseMessge;
 import Tower.Tower;
 
@@ -15,9 +16,10 @@ public class TowerDefenseModel extends Observable{
 	private int ROW; //this is temporary
 	private int COL; //this is temporary
 	private List<Point> path = new ArrayList<>();
-	private List<List<Enemies>> wave = new ArrayList<>();
+	private List<List<Enemy>> wave = new ArrayList<>();
+	private ArrayList<Tower> towerList = new ArrayList<>();
 	
-	private Map<Enemies, Point> map = new HashMap<>();
+	private Map<Enemy, Point> map = new HashMap<>();
 	
 	
 	private TowerDefenseCell objBoard [][];
@@ -32,15 +34,21 @@ public class TowerDefenseModel extends Observable{
 		return pathCoord;
 	}
 
-	public void setPathCoord(int a) {
-		this.pathCoord.add(a);
-	}
+	
 
 	public TowerDefenseModel() {
 		objBoard =   new TowerDefenseCell [ROW][COL];
 		intBoard = new int [ROW][COL];
 		this.balance = 1000;
 		
+	}
+	
+	public void setPathCoord(int a) {
+		this.pathCoord.add(a);
+	}
+	
+	public ArrayList<Tower> getTowerList() {
+		return this.towerList;
 	}
 	
 	/**
@@ -50,6 +58,11 @@ public class TowerDefenseModel extends Observable{
 	 */
 	public void placeTower(int row, int col) {
 		if((this.balance - LAST_CLICKED_TOWER.getCost()) >= 0) { //checks negative balance
+			LAST_CLICKED_TOWER.setTowerROW(row);
+			LAST_CLICKED_TOWER.setTowerCOL(col);
+			// give a unique id
+			LAST_CLICKED_TOWER.setId(UUID.randomUUID().toString());
+			towerList.add(LAST_CLICKED_TOWER);
 			objBoard[row][col].add(LAST_CLICKED_TOWER);
 			intBoard[row][col] = 2;
 			this.balance -= LAST_CLICKED_TOWER.getCost();
@@ -68,9 +81,14 @@ public class TowerDefenseModel extends Observable{
 		objBoard[row][col].setToEmpty();
 		intBoard[row][col] = 0;
 		this.balance += LAST_CLICKED_TOWER.getCost();
+		for(Tower tower : towerList) {
+			if(tower.getId().equals(LAST_CLICKED_TOWER.getId())) {
+				towerList.remove(LAST_CLICKED_TOWER);
+			}
+		}
 		LAST_CLICKED_TOWER = null;
-		System.out.println("balance" + this.balance);
-		System.out.println("sellTower" + row +" "+col);
+//		System.out.println("balance" + this.balance);
+//		System.out.println("sellTower" + row +" "+col);
 		TowerDefenseMessge message = new TowerDefenseMessge(row, col, 0);
 		setChanged();
 		notifyObservers(message);
@@ -157,19 +175,19 @@ public class TowerDefenseModel extends Observable{
 		this.path = path;
 	}
 
-	public List<List<Enemies>> getWave() {
+	public List<List<Enemy>> getWave() {
 		return wave;
 	}
 
-	public void setWave(List<List<Enemies>> wave) {
+	public void setWave(List<List<Enemy>> wave) {
 		this.wave = wave;
 	}
 
-	public Map<Enemies, Point> getMap() {
+	public Map<Enemy, Point> getMap() {
 		return map;
 	}
 
-	public void setMap(Map<Enemies, Point> map) {
+	public void setMap(Map<Enemy, Point> map) {
 		this.map = map;
 	}
 

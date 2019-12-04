@@ -1,5 +1,8 @@
 package MVC;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 import java.util.HashMap;
@@ -9,7 +12,9 @@ import java.util.Map.Entry;
 import java.util.Observable;
 import java.util.Observer;
 
-import Enemies.Enemies;
+import javax.swing.JOptionPane;
+
+import Enemies.Enemy;
 import Networking.TowerDefenseMessge;
 import Tower.*;
 import javafx.animation.KeyFrame;
@@ -32,11 +37,12 @@ import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import sun.audio.AudioPlayer;
+import sun.audio.AudioStream;
 
 import Enemies.*;
 
@@ -247,7 +253,7 @@ public class TowerDefenseView extends Application implements Observer {
 			towerBox.getChildren().addAll(towerButton, towerCost);
 			mainTowerBox.getChildren().addAll(towerBox);
 			towerButton.setOnAction(e -> {
-				System.out.println("tower");
+//				System.out.println("tower");
 				controller.new_tower_to_LCT(index);
 			});
 		}
@@ -263,6 +269,15 @@ public class TowerDefenseView extends Application implements Observer {
 			controller.sellTower(x, y);
 
 		});
+		
+		VBox testBox = new VBox(5);
+		Button testButton = new Button("test");
+		towerBox.getChildren().addAll(testButton);
+		mainTowerBox.getChildren().addAll(testBox);
+		testButton.setOnMouseClicked(e -> {
+			this.fps();
+		});
+		
 		vBox.getChildren().add(mainTowerBox);
 	}
 
@@ -293,7 +308,16 @@ public class TowerDefenseView extends Application implements Observer {
 	//
 
 	private void startTimer() {
-		timeline = new Timeline(new KeyFrame(Duration.millis(100), e -> fps()));
+		InputStream music;
+		try {
+			music = new FileInputStream(new File("sound/first_turrets.wav"));
+			AudioStream audios = new AudioStream(music);
+			AudioPlayer.player.start(audios);
+		}
+		catch(Exception e) {
+			JOptionPane.showMessageDialog(null, "Error");
+		}
+		timeline = new Timeline(new KeyFrame(Duration.millis(1000), e -> fps()));
 		timeline.setCycleCount(Timeline.INDEFINITE);
 		timeline.setAutoReverse(false);
 		timeline.play();
@@ -318,7 +342,7 @@ public class TowerDefenseView extends Application implements Observer {
 			 * message.getRow());
 			 */
 			if (message.getColor() == 0) { // Grass
-				System.out.println("sell");
+//				System.out.println("sell");
 				
 				Rectangle rec = new Rectangle();
 				rec.setFill(Color.GREEN);
@@ -338,13 +362,21 @@ public class TowerDefenseView extends Application implements Observer {
 			System.out.println("row: " + message.getRow());
 		}else { 
 			
+			
 			/*
 			 * move enemies on the view based on the data from model
 			 */
-			Map<Enemies, Point> map = model.getMap();
+			Map<Enemy, Point> map = model.getMap();
+			ArrayList<Enemy> removelist = new ArrayList<>();
+			
+			for(Entry<Enemy, Point> element : map.entrySet()) {
+				Enemy key = element.getKey();
+				System.out.print("enemy hp: " + key.getHp() + " ");
+			}
+			
 			// enemy in view
-			for (Entry<Enemies, Point> element : map.entrySet()) {
-				Enemies key = element.getKey();
+			for (Entry<Enemy, Point> element : map.entrySet()) {
+				Enemy key = element.getKey();
 				Point value = element.getValue();
 				if (value==null) {
 					// create enemy (circle) in start point
@@ -372,9 +404,13 @@ public class TowerDefenseView extends Application implements Observer {
 					// find circle
 					Circle circle = circleMap.get(key.getId());
 					// Trigger die?
-					boolean die = false;
-					if (die) {
+//					System.out.println(key.isAlive());
+					
+					
+					if (!key.isAlive()) {
 						circle.setVisible(false);
+						removelist.add(key);
+						circleMap.remove(key.getId());
 					}else {
 						Path path = new Path();
 						path.getElements().add(new MoveTo(value.getX(), value.getY()));
@@ -382,7 +418,7 @@ public class TowerDefenseView extends Application implements Observer {
 						
 						// move in line
 						pathTransition = new PathTransition();
-						pathTransition.setDuration(Duration.millis(100));
+						pathTransition.setDuration(Duration.millis(1000));
 						pathTransition.setNode(circle);
 						pathTransition.setPath(path);
 						//
@@ -398,6 +434,10 @@ public class TowerDefenseView extends Application implements Observer {
 					}
 				}
 			}
+			for(Enemy enemy : removelist) {
+				controller.removeEnemy(enemy);
+			}
+			System.out.println();
 		}
 
 	}
