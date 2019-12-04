@@ -1,5 +1,5 @@
 package Enemies;
-
+ 
 public class Enemy2 extends Enemy {
 
 	

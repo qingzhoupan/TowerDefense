@@ -1,5 +1,5 @@
 package Enemies;
-
+ 
 import MVC.Point;
 
 public abstract class Enemy extends Point {

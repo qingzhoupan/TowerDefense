@@ -1,5 +1,5 @@
 package Tower;
-
+ 
 import MVC.Point;
 
 public class Tower6 extends Tower {

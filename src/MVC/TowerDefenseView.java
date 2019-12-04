@@ -320,7 +320,7 @@ public class TowerDefenseView extends Application implements Observer {
 	// Duration.millis(2500),ae -> doSomething())).play();
 	//
 
-	private void startTimer() {
+	private void startTimer() { 
 		InputStream music;
 		try {
 			music = new FileInputStream(new File("sound/first_turrets.wav"));

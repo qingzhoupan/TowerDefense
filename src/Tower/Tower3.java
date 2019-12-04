@@ -3,7 +3,7 @@ package Tower;
 import MVC.Point;
 
 public class Tower3 extends Tower {
-
+ 
 	public Tower3() {
 		super();
 		this.damage = 3;

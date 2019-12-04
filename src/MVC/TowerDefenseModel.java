@@ -49,6 +49,7 @@ public class TowerDefenseModel extends Observable{
 		objBoard =   new TowerDefenseCell [ROW][COL];
 		intBoard = new int [ROW][COL];
 		this.balance = 1000;
+	 	 
 		
 	}
 	

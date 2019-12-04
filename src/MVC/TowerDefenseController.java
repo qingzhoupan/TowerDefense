@@ -37,7 +37,7 @@ public class TowerDefenseController {
 		int row = Integer.parseInt(input.nextLine());
 		int col = Integer.parseInt(input.nextLine());
 		model.setRow(row);
-		model.setCol(col);
+		model.setCol(col);   
 		model.init_Board();
 		
 		// set up turn point
