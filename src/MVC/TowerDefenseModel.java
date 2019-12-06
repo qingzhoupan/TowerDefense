@@ -10,6 +10,7 @@ import java.util.UUID;
 import Enemies.Enemy;
 import Networking.TowerDefenseMessge;
 import Tower.Tower;
+import Tower.Tower6;
 
 public class TowerDefenseModel extends Observable{
 	
@@ -76,7 +77,7 @@ public class TowerDefenseModel extends Observable{
 			objBoard[row][col].add(LAST_CLICKED_TOWER);
 			intBoard[row][col] = 2;
 			this.balance -= LAST_CLICKED_TOWER.getCost();
-			TowerDefenseMessge message = new TowerDefenseMessge(row, col, 2);
+			TowerDefenseMessge message = new TowerDefenseMessge(row, col, LAST_CLICKED_TOWER.getIndex());
 			setChanged();
 			notifyObservers(message);
 		}
@@ -92,8 +93,10 @@ public class TowerDefenseModel extends Observable{
 		intBoard[row][col] = 0;
 		this.balance += LAST_CLICKED_TOWER.getCost();
 		for(Tower tower : towerList) {
-			if(tower.getId().equals(LAST_CLICKED_TOWER.getId())) {
+			System.out.println(tower.getName());
+			if(tower.getName().equals(LAST_CLICKED_TOWER.getName())) {
 				towerList.remove(LAST_CLICKED_TOWER);
+				
 			}
 		}
 		LAST_CLICKED_TOWER = null;
@@ -105,6 +108,16 @@ public class TowerDefenseModel extends Observable{
 	}
 
 	public void fps() {
+//		Tower tower6 = new Tower6();
+//		System.out.println(towerList.contains(tower6));
+//		if(towerList.contains(tower6)) {
+//			addBalance(30);
+//		}
+		for(Tower tower : towerList) {
+			if(tower.getName().equals("Tower 6")) {
+				addBalance(30);
+			}
+		}
 		setChanged();
 		notifyObservers();
 	}
@@ -199,6 +212,20 @@ public class TowerDefenseModel extends Observable{
 
 	public void setMap(Map<Enemy, Point> map) {
 		this.map = map;
+	}
+
+	public void addBalance(int credit) {
+		this.balance += credit;	
+		TowerDefenseMessge message = new TowerDefenseMessge(0, 0, -1);
+		setChanged();
+		notifyObservers(message);
+	}
+
+	public void attackAction() {
+		TowerDefenseMessge message = new TowerDefenseMessge(0, 0, 99);
+		setChanged();
+		notifyObservers(message);
+		
 	}
 
 	

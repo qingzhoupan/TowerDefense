@@ -134,7 +134,7 @@ public class TowerDefenseView extends Application implements Observer {
 //				rec.setHeight(45);
 				
 				if(controller.get_imagePos() > 0) {
-					Image image = new Image("file:image/map1/" +controller.get_imagePos() + ".jpg"); 
+					Image image = new Image("file:image/map3/" +controller.get_imagePos() + ".jpg"); 
 					ImageView imageView = new ImageView();
 					imageView.setImage(image);
 					imageView.setFitHeight(50);
@@ -225,9 +225,8 @@ public class TowerDefenseView extends Application implements Observer {
 	 */
 	private void createMoney(VBox vBox) {
 		VBox moneyBox = new VBox(5);
-		TextFlow moneyDisplay = new TextFlow();
+//		TextFlow moneyDisplay = new TextFlow();
 		Text moneyTitle = new Text("BALANCE");
-		// controller.getStartingBalance
 		moneyBalance = new Label(Integer.toString(controller.getBalance()));
 		moneyBox.getChildren().addAll(moneyTitle, moneyBalance);
 		vBox.getChildren().add(moneyBox);
@@ -341,34 +340,51 @@ public class TowerDefenseView extends Application implements Observer {
 	}
 
 	
-	Map<String, Circle> circleMap = new HashMap<>();
+	Map<String, ImageView> circleMap = new HashMap<>();
 	@Override
 	public void update(Observable o, Object arg) {
 		TowerDefenseModel model = (TowerDefenseModel)o;
-		if (arg != null) { // TODO
-
+		if (arg != null) {
 			TowerDefenseMessge message = (TowerDefenseMessge) arg;
-			/*
-			 * Image image = new Image("file:image/456.jpg"); ImageView imageView = new
-			 * ImageView(); imageView.setImage(image); imageView.setFitHeight(45);
-			 * imageView.setFitWidth(45); gridPane.add(imageView, message.getCol(),
-			 * message.getRow());
-			 */
+
 			if (message.getColor() == 0) { // Grass
-//				System.out.println("sell");
 				
-				Rectangle rec = new Rectangle();
-				rec.setFill(Color.GREEN);
-				rec.setWidth(45);
-				rec.setHeight(45);
-				gridPane.add(rec, message.getCol(), message.getRow());
-			} else if (message.getColor() == 2) { // Tower
-				Rectangle rec = new Rectangle();
-				rec.setFill(Color.RED);
-				rec.setWidth(45);
-				rec.setHeight(45);
-				gridPane.add(rec, message.getCol(), message.getRow());
+				Image image = new Image("file:image/map1/" + 
+						((15 - message.getRow() - 1) * 15 + (15 - message.getCol())) + ".jpg"); 
+				ImageView imageView = new ImageView();
+				imageView.setImage(image);
+				imageView.setFitHeight(50);
+				imageView.setFitWidth(50); 
 				
+				gridPane.add(imageView, message.getCol(), message.getRow());
+			} else if (message.getColor() > 0 && message.getColor() < 7) { // Tower
+				ImageView imageView = new ImageView();
+				if(message.getColor() == 1) {
+					Image image = new Image("file:image/tower/t1.gif"); 
+					imageView.setImage(image);
+				}else if(message.getColor() == 2) {
+					Image image = new Image("file:image/tower/t2.gif"); 
+					imageView.setImage(image);
+				}else if(message.getColor() == 3) {
+					Image image = new Image("file:image/tower/t3.gif"); 
+					imageView.setImage(image);
+				}else if(message.getColor() == 4) {
+					Image image = new Image("file:image/tower/t4.gif"); 
+					imageView.setImage(image);
+				}else if(message.getColor() == 5) {
+					Image image = new Image("file:image/tower/t5.gif"); 
+					imageView.setImage(image);
+				}else if(message.getColor() == 6) {
+					Image image = new Image("file:image/tower/t1.gif"); 
+					imageView.setImage(image);
+				}
+				imageView.setFitHeight(50);
+				imageView.setFitWidth(50); 	
+				gridPane.add(imageView, message.getCol(), message.getRow());
+			}else if(message.getColor() == -1 ){ // < 0 update balance
+					
+			}else { // attack action
+					
 			}
 			moneyBalance.setText(Integer.toString(controller.getBalance()));
 			System.out.println("col: " + message.getCol());
@@ -392,30 +408,43 @@ public class TowerDefenseView extends Application implements Observer {
 				Enemy key = element.getKey();
 				Point value = element.getValue();
 				if (value==null) {
-					// create enemy (circle) in start point
-					Circle circle = new Circle();
-					circle.setCenterX(-50);
-					circle.setCenterY(-50);
-					circle.setRadius(20);
+					ImageView imageView = new ImageView();
+
+					imageView.setX(-50);
+					imageView.setY(-50);
+//					circle.setRadius(20);
 					if(key instanceof Enemy1) {
-						circle.setFill(Color.RED);
+						Image image = new Image("file:image/enemy/e1.gif"); 
+						imageView.setImage(image);	
+//						gridPane.add(imageView, j, i);
+//						controller.update_imagePos();
+//						circle.setFill(Color.RED);
 					}else if(key instanceof Enemy2) {
-						circle.setFill(Color.PINK);
+						Image image = new Image("file:image/enemy/e2.gif"); 
+						imageView.setImage(image);
+//						circle.setFill(Color.PINK);
 					}else if(key instanceof Enemy3) {
-						circle.setFill(Color.BLUE);
+						Image image = new Image("file:image/enemy/e3.gif"); 
+						imageView.setImage(image);
+//						circle.setFill(Color.BLUE);
 					}else if(key instanceof Enemy4) {
-						circle.setFill(Color.GREY);
+						Image image = new Image("file:image/enemy/e4.gif"); 
+						imageView.setImage(image);
+//						circle.setFill(Color.GREY);
 					}else {
-						circle.setFill(Color.BLACK);
+//						circle.setFill(Color.BLACK);
 					}
+					
+					imageView.setFitHeight(50);
+					imageView.setFitWidth(50);
 					/*Path path = new Path();
 					path.getElements().add(new MoveTo(key.getX(), key.getY()));*/
-					circleMap.put(key.getId(), circle);
-					root.getChildren().add(circle);
+					circleMap.put(key.getId(), imageView);
+					root.getChildren().add(imageView);
 					// create line
 				}else {
 					// find circle
-					Circle circle = circleMap.get(key.getId());
+					ImageView circle = circleMap.get(key.getId());
 					// Trigger die?
 //					System.out.println(key.isAlive());
 					
@@ -424,6 +453,11 @@ public class TowerDefenseView extends Application implements Observer {
 						circle.setVisible(false);
 						removelist.add(key);
 						circleMap.remove(key.getId());
+						
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+						model.addBalance(key.getCredit());
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+						
 					}else {
 						Path path = new Path();
 						path.getElements().add(new MoveTo(value.getX(), value.getY()));
@@ -440,7 +474,8 @@ public class TowerDefenseView extends Application implements Observer {
 //							System.out.println("end!!");
 							path.getElements().clear();
 						});
-//						System.out.println(key.getX());
+
+						// enemy exits map without dying 
 						if(key.getX() == 15 * HEIGHT + 25) {
 							circle.setVisible(false);	
 						}

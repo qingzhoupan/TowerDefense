@@ -7,7 +7,7 @@ public abstract class Enemy extends Point {
 	private String id;
 	
 	protected int hp;
-	protected int cost;
+	protected int credit;
 	protected int speed;
 	protected boolean alive;
 	
@@ -19,11 +19,8 @@ public abstract class Enemy extends Point {
 	public void setHp(int hp) {
 		this.hp = hp;
 	}
-	public int getCost() {
-		return cost;
-	}
-	public void setCost(int cost) {
-		this.cost = cost;
+	public int getCredit() {
+		return credit;
 	}
 	public int getSpeed() {
 		return speed;

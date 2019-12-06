@@ -10,7 +10,7 @@ public class Tower5 extends Tower {
 		this.cost = 500;
 		this.range = 5;
 		this.exist = true;
-		this.index = "5";
+		this.index = 5;
 		this.name = "Tower 5";
 	}
 
@@ -20,6 +20,9 @@ public class Tower5 extends Tower {
 
 	// range ? // TODO
 	public boolean inRange(Point point) {
+		if (point.getCol()==null) {
+			return false;
+		}
 		if (this.towerCOL == point.getCol() && this.towerROW == point.getRow() + 1) {
 			return true;
 		}

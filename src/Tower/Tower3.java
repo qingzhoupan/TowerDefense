@@ -10,7 +10,7 @@ public class Tower3 extends Tower {
 		this.cost = 300;
 		this.range = 3;
 		this.exist = true;
-		this.index = "3";
+		this.index = 3;
 		this.name = "Tower 3";
 	}
 
@@ -28,7 +28,7 @@ public class Tower3 extends Tower {
 			return false;
 		}
 		
-		if (this.towerCOL-1==point.getCol()&&this.towerROW==point.getRow()) {
+		if (this.towerCOL - 2 == point.getCol() && this.towerROW == point.getRow()) {
 			System.out.println("return true");
 			return true;
 		}

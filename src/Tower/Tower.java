@@ -9,13 +9,16 @@ public abstract class Tower {
 //	protected int soldPrice = (int) 0.75 * cost;
 	protected int range;
 	protected boolean exist;
-	protected String index;
+	protected int index;
 	protected String name;
 	protected int towerROW;
 	protected int towerCOL;
 	private String id;
+	
+	
 	public abstract void upgrade();
 	public abstract boolean inRange(Point point);
+	
 	
 	public int getSoldPrice() {
 		return (int) (0.75 * cost);
@@ -69,7 +72,7 @@ public abstract class Tower {
 	public boolean isExist() {
 		return this.exist;
 	}
-	public String getIndex() {
+	public int getIndex() {
 		return index;
 	}
 	public String getName() {
