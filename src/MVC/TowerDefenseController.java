@@ -1,16 +1,31 @@
 package MVC;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 import java.util.UUID;
 
-import Enemies.*;
-import Tower.*; //imports Tower package
+import Enemies.Enemy;
+import Enemies.Enemy1;
+import Enemies.Enemy2;
+import Enemies.Enemy3;
+import Enemies.Enemy4;
+//imports Tower package
+import Tower.Tower;
+import Tower.Tower1;
+import Tower.Tower2;
+import Tower.Tower3;
+import Tower.Tower4;
+import Tower.Tower5;
+import Tower.Tower6;
+import main.TowerDefense;
 
 
 /**
@@ -21,7 +36,6 @@ public class TowerDefenseController {
 
 	TowerDefenseModel model;
 	TowerDefenseView view;
-	private List<Enemy> list;
 
 	public TowerDefenseController(TowerDefenseView towerDefenseView) {
 		model = new TowerDefenseModel();
@@ -35,7 +49,7 @@ public class TowerDefenseController {
 	private void createStage() {
 		Scanner input = null;
 		try {
-			input = new Scanner(new File("map3.txt"));
+			input = new Scanner(new File("map"+TowerDefense.LEVEL+".txt"));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -73,18 +87,6 @@ public class TowerDefenseController {
 			Point p = new Point(Integer.valueOf(pathPoint[0]), Integer.valueOf(pathPoint[1]));
 			model.getPath().add(p);
 		}
-//		// TODO
-//		List<Enemies> enemiesList = new ArrayList<>();
-//		Enemy1 enemy1 = new Enemy1();
-//		enemy1.setId(UUID.randomUUID().toString());
-//		enemiesList.add(enemy1);
-//		enemy1 = new Enemy1();
-//		enemy1.setId(UUID.randomUUID().toString());
-//		enemiesList.add(enemy1);
-//		enemy1 = new Enemy1();
-//		enemy1.setId(UUID.randomUUID().toString());
-//		enemiesList.add(enemy1);
-//		model.getWave().add(enemiesList);
 	}
 
 	public ArrayList<Enemy> helper(String[] wave){
@@ -125,17 +127,9 @@ public class TowerDefenseController {
 	}
 
 	public void sellTower(int x, int y) {
-		// System.out.println("X: " + x);
-		// System.out.println("Y: " + y);
-		int col = x / 50;
-		int row = y / 50;
-		// System.out.println("ROW: " + row);
-		// System.out.println("COL: " + col);
 		if (getLCT() != null) {
-			// System.out.println("!!!!!!!!!!!!!!!!!!!");
-			model.sellTower(row, col);
+			model.sellTower(y, x);
 		}
-
 	}
 
 	public void new_tower_to_LCT(String towerType) {
@@ -173,8 +167,6 @@ public class TowerDefenseController {
 	public boolean is_tower_here(int x, int y) {
 		int col = x / 50;
 		int row = y / 50;
-		// System.out.println("is tower here: here is" + model.get_intBoard_pos(row,
-		// col));
 		if (model.get_intBoard_pos(row, col) != 2) {
 			return false;
 		}
@@ -222,18 +214,18 @@ public class TowerDefenseController {
 	public void fps() {
 		// set enemies waves
 		if(model.getMap().isEmpty() && !model.getWave().isEmpty()) {
-			list = model.getWave().get(0);
+			model.currentEnemyList = model.getWave().get(0);
 			model.getWave().remove(0);
 		}
 		
 		// attack
 		for(Tower tower : model.getTowerList()) {
-			for (Iterator<Enemy> iterator = list.iterator(); iterator.hasNext();) {
+			for (Iterator<Enemy> iterator = model.currentEnemyList.iterator(); iterator.hasNext();) {
 				Enemy enemy = iterator.next();
 				System.out.println(enemy.getCol());
 				if (tower.inRange(enemy)) {
-					enemy.beingAttacked(tower.getDamage());
-					model.attackAction();
+					model.attackAction(tower, enemy);
+					enemy.beingAttacked(tower.getDamage());		
 					if(!enemy.isAlive()) {
 						iterator.remove();
 					}
@@ -242,7 +234,7 @@ public class TowerDefenseController {
 		}
 		
 		// 1 enemy move
-		for (Enemy enemies : list) {
+		for (Enemy enemies : model.currentEnemyList) {
 			List<Point> path = model.getPath();
 			if (enemies.getCol()==null) {
 				//initEnemy();
@@ -261,8 +253,6 @@ public class TowerDefenseController {
 						}else {
 							enemies.move(path.get(i+1));
 							model.getMap().put(enemies, point);
-//							System.out.println("Enemy list: " + list);
-//							System.out.println("Tower list: " + model.getTowerList());
 							break;
 						}
 					}
@@ -284,5 +274,43 @@ public class TowerDefenseController {
 	
 	public void update_imagePos() {
 		model.update_imagePos();
+	}
+
+	public void refrashEndStatus() {
+		if (!model.changingMap) {
+			if (model.getWave().isEmpty() && model.getMap().isEmpty()) {
+				model.changeMap();
+			} 
+		}
+	}
+
+	public ArrayList<Tower> getTowerList() {
+		return model.getTowerList();
+	}
+
+	public void save() {
+		try{  
+            FileOutputStream fs = new FileOutputStream("foo.ser");  // TODO
+            ObjectOutputStream os =  new ObjectOutputStream(fs);  
+            os.writeObject(this.model);  
+            os.close();  
+        }catch(Exception ex){  
+            ex.printStackTrace();  
+        }  
+	}
+
+	public void load() {
+		try {
+			FileInputStream fs = new FileInputStream("foo.ser");  // TODO
+			ObjectInputStream os =  new ObjectInputStream(fs);  
+			this.model = (TowerDefenseModel)os.readObject();
+			os.close(); 
+			System.out.println("loadTest !!!!!!!!!!!!!"+model.getCol());
+			model.addObserver(this.view);
+			model.loadTower();
+			fps();
+		}catch(Exception ex){  
+            ex.printStackTrace();  
+		}
 	}
 }

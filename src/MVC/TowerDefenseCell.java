@@ -1,8 +1,9 @@
 package MVC;
  
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class TowerDefenseCell {
+public class TowerDefenseCell implements Serializable {
 	private ArrayList<Object> cellList;
 	
 	TowerDefenseCell(){

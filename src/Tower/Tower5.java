@@ -23,7 +23,13 @@ public class Tower5 extends Tower {
 		if (point.getCol()==null) {
 			return false;
 		}
-		if (this.towerCOL == point.getCol() && this.towerROW == point.getRow() + 1) {
+		if (this.towerCOL == point.getCol() && this.towerROW == point.getRow() + 2) {
+			return true;
+		}else if(this.towerCOL == point.getCol() + 2 && this.towerROW == point.getRow()) {
+			return true;
+		}else if(this.towerCOL == point.getCol() - 2 && this.towerROW == point.getRow()) {
+			return true;
+		}else if(this.towerCOL == point.getCol() && this.towerROW == point.getRow() - 2) {
 			return true;
 		}
 		return false;

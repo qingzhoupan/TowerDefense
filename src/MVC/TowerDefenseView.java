@@ -4,26 +4,40 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Optional;
 
 import javax.swing.JOptionPane;
 
 import Enemies.Enemy;
+import Enemies.Enemy1;
+import Enemies.Enemy2;
+import Enemies.Enemy3;
+import Enemies.Enemy4;
 import Networking.TowerDefenseMessge;
-import Tower.*;
+import Tower.Tower;
+import Tower.Tower1;
+import Tower.Tower2;
+import Tower.Tower3;
+import Tower.Tower4;
+import Tower.Tower5;
+import Tower.Tower6;
 import javafx.animation.KeyFrame;
 import javafx.animation.PathTransition;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -38,74 +52,41 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import main.TowerDefense;
 import sun.audio.AudioPlayer;
 import sun.audio.AudioStream;
-
-import Enemies.*;
 
 public class TowerDefenseView extends Application implements Observer {
 
 	public static final double HEIGHT = 50;
-	
+
 	public TowerDefenseController controller;
 	private GridPane gridPane = new GridPane();
-	private TowerDestory sellTower;
+	private Tower sellTower = null;
 	private Label moneyBalance;
-	private Timeline timeline;
-	private int SECS = 0;
-	private long waveInterval = 5;
+	private static Timeline timeline;
 	private PathTransition pathTransition;
 	private Group root;
+	private BorderPane window;
+	private AudioStream audios;
 
 	public TowerDefenseView() {
-		controller = new TowerDefenseController(this);
+		init();
+
 	}
 
-	// @Override
-	// public void start(Stage stage) throws Exception {
-	// stage.setTitle("Tower Defense");
-	// BorderPane window = new BorderPane();
-	//
-	// Path path = new Path();
-	// Circle circle = new Circle();
-	//
-	// circle.setCenterX(50);
-	// circle.setCenterX(50);
-	// circle.setRadius(20);
-	// circle.setFill(Color.BLACK);
-	//
-	// path.getElements().add(new MoveTo(50, 50));
-	// path.getElements().add(new LineTo(300, 50));
-	// path.getElements().add(new LineTo(300, 100));
-	// path.getElements().add(new LineTo(250, 100));
-	// PathTransition pathTransition = new PathTransition();
-	// pathTransition.setDuration(Duration.millis(5000));
-	// pathTransition.setNode(circle);
-	// pathTransition.setPath(path);
-	// pathTransition.play();
-	// //Scene scene2 = new Scene(root, 600, 300);
-	// //window.getChildren().add(root);
-	// Group root = new Group();
-	// createBoard(window);
-	// createRightContainer(window);
-	// root.getChildren().add(window);
-	// root.getChildren().add(circle);
-	//
-	// Scene scene = new Scene(root, 850, 750);
-	// stage.setScene(scene);
-	// //stage.setScene(scene2);
-	// stage.show();
-	// }
+	public void init() {
+		controller = new TowerDefenseController(this);
+		playSound("start.wav");
+	}
 
 	@Override
 	public void start(Stage stage) throws Exception {
 		stage.setTitle("Tower Defense");
-		BorderPane window = new BorderPane();
+		window = new BorderPane();
 		root = new Group(window);
 		createBoard(window);
 		createRightContainer(window);
@@ -124,47 +105,42 @@ public class TowerDefenseView extends Application implements Observer {
 	private void createBoard(BorderPane window) {
 		for (int i = 0; i < controller.getCol(); i++) {
 			for (int j = 0; j < controller.getRow(); j++) {
-//				Rectangle rec = new Rectangle();
-//				if (controller.get_intBoard()[j][i] == 1) {
-//					rec.setFill(Color.YELLOW);
-//				} else {
-//					rec.setFill(Color.GREEN);
-//				}
-//				rec.setWidth(45);
-//				rec.setHeight(45);
-				
-				if(controller.get_imagePos() > 0) {
-					Image image = new Image("file:image/map3/" +controller.get_imagePos() + ".jpg"); 
+
+				if (controller.get_imagePos() > 0) {
+					Image image = new Image(
+							"file:image/map" + TowerDefense.LEVEL + "/" + controller.get_imagePos() + ".jpg");
 					ImageView imageView = new ImageView();
 					imageView.setImage(image);
 					imageView.setFitHeight(50);
-					imageView.setFitWidth(50); 
-					
+					imageView.setFitWidth(50);
+
 					gridPane.add(imageView, j, i);
 					controller.update_imagePos();
 				}
-				
+
 			}
 		}
 		gridPane.setOnMouseClicked(e -> {
 			int x = (int) e.getX();
 			int y = (int) e.getY();
-			// System.out.println(controller.getLCT());
-
 			if (!controller.is_tower_here(x, y)) {
 				if (controller.getLCT() != null) {
 					controller.placeTower(x, y);
 				} else {
 					// lct is null, nothing happen
+					playSound("404.wav");
 				}
 			} else {
 				if (controller.getLCT() == null) {
-					sellTower = new TowerDestory(x, y);
+					for (Tower tower : controller.getTowerList()) {
+						if (tower.getTowerCOL() == x / 50 && tower.getTowerROW() == y / 50) {
+							sellTower = tower;
+						}
+					}
 					Tower temp = controller.getTowerAt(x, y);
 					int credit = temp.getSoldPrice();
 					sellTower.setCost(credit);
 					controller.setLCT(sellTower);
-
 				} else {
 					controller.setLCT_null();
 				}
@@ -204,14 +180,24 @@ public class TowerDefenseView extends Application implements Observer {
 		MenuItem startGame = new MenuItem("Start Game");
 		MenuItem pause = new MenuItem("Pause");
 		MenuItem speedUp = new MenuItem("Speed++");
+		MenuItem save = new MenuItem("Save");
+		MenuItem load = new MenuItem("Load");
+
 		pause.setDisable(true); // disable until new game is clicked
 		speedUp.setDisable(true); // disable until new game is clicked
 
+		
+		save.setOnAction(event -> {
+			this.controller.save();
+		});
+		load.setOnAction(event -> {
+			this.controller.load();
+		});
 		// event handler
 		startGame.setOnAction(event -> {
 			startNewGame(startGame, pause, speedUp); // parameters used when new game
 		});
-		menu.getItems().addAll(newGame, startGame, pause, speedUp);
+		menu.getItems().addAll(newGame, startGame, pause, speedUp, save, load);
 		menuBar.getMenus().add(menu);
 		VBox menuBox = new VBox(menuBar);
 		vBox.getChildren().add(menuBox);
@@ -225,7 +211,7 @@ public class TowerDefenseView extends Application implements Observer {
 	 */
 	private void createMoney(VBox vBox) {
 		VBox moneyBox = new VBox(5);
-//		TextFlow moneyDisplay = new TextFlow();
+		// TextFlow moneyDisplay = new TextFlow();
 		Text moneyTitle = new Text("BALANCE");
 		moneyBalance = new Label(Integer.toString(controller.getBalance()));
 		moneyBox.getChildren().addAll(moneyTitle, moneyBalance);
@@ -265,7 +251,7 @@ public class TowerDefenseView extends Application implements Observer {
 			towerBox.getChildren().addAll(towerButton, towerCost);
 			mainTowerBox.getChildren().addAll(towerBox);
 			towerButton.setOnAction(e -> {
-//				System.out.println("tower");
+				playSound("Click.wav");
 				controller.new_tower_to_LCT(index);
 			});
 		}
@@ -276,12 +262,12 @@ public class TowerDefenseView extends Application implements Observer {
 		towerBox.getChildren().addAll(sellButton, sellReturn);
 		mainTowerBox.getChildren().addAll(towerBox);
 		sellButton.setOnMouseClicked(e -> {
-			int x = sellTower.getSellX();
-			int y = sellTower.getSellY();
+			int x = sellTower.getTowerCOL();
+			int y = sellTower.getTowerROW();
 			controller.sellTower(x, y);
 
 		});
-		
+
 		VBox testBox = new VBox(5);
 		Button testButton = new Button("test");
 		towerBox.getChildren().addAll(testButton);
@@ -289,7 +275,7 @@ public class TowerDefenseView extends Application implements Observer {
 		testButton.setOnMouseClicked(e -> {
 			this.fps();
 		});
-		
+
 		vBox.getChildren().add(mainTowerBox);
 	}
 
@@ -308,186 +294,291 @@ public class TowerDefenseView extends Application implements Observer {
 	}
 
 	private void pauseGame() {
-
+		timeline.pause();
 	}
 
 	private void speedUpGame() {
-
-	}
-
-	// new Timeline(new KeyFrame(
-	// Duration.millis(2500),ae -> doSomething())).play();
-	//
-
-	private void startTimer() { 
-		InputStream music;
-		try {
-			music = new FileInputStream(new File("sound/first_turrets.wav"));
-			AudioStream audios = new AudioStream(music);
-			AudioPlayer.player.start(audios);
-		}
-		catch(Exception e) {
-			JOptionPane.showMessageDialog(null, "Error");
-		}
-		timeline = new Timeline(new KeyFrame(Duration.millis(1000), e -> fps()));
+		timeline.stop();
+		timeline = new Timeline();
+		addKeyFrame(100);
 		timeline.setCycleCount(Timeline.INDEFINITE);
 		timeline.setAutoReverse(false);
 		timeline.play();
+	}
+
+	private void startTimer() {
+		if(TowerDefense.LEVEL == 1 || TowerDefense.LEVEL == 2) {
+			playBackground("1and2.wav");
+		}else {
+			playBackground("3.wav");
+		}
+		double speed = 1000;
+		timeline = new Timeline();
+		addKeyFrame(speed);
+		timeline.setCycleCount(Timeline.INDEFINITE);
+		timeline.setAutoReverse(false);
+		timeline.play();
+	}
+
+	private void addKeyFrame(double speed) {
+		KeyFrame keyFrame = new KeyFrame(Duration.millis(speed), e -> fps());
+		KeyFrame refrashEndStatus = new KeyFrame(Duration.millis(speed), e -> refrashEndStatus());
+		timeline.getKeyFrames().add(keyFrame);
+		timeline.getKeyFrames().add(refrashEndStatus);
 	}
 
 	private void fps() {
 		controller.fps();
 	}
 
-	
+	private void refrashEndStatus() {
+		controller.refrashEndStatus();
+	}
+
 	Map<String, ImageView> circleMap = new HashMap<>();
+
 	@Override
 	public void update(Observable o, Object arg) {
-		TowerDefenseModel model = (TowerDefenseModel)o;
+		TowerDefenseModel model = (TowerDefenseModel) o;
 		if (arg != null) {
 			TowerDefenseMessge message = (TowerDefenseMessge) arg;
-
 			if (message.getColor() == 0) { // Grass
-				
-				Image image = new Image("file:image/map1/" + 
-						((15 - message.getRow() - 1) * 15 + (15 - message.getCol())) + ".jpg"); 
-				ImageView imageView = new ImageView();
-				imageView.setImage(image);
-				imageView.setFitHeight(50);
-				imageView.setFitWidth(50); 
-				
-				gridPane.add(imageView, message.getCol(), message.getRow());
+				sellTower(message);
 			} else if (message.getColor() > 0 && message.getColor() < 7) { // Tower
-				ImageView imageView = new ImageView();
-				if(message.getColor() == 1) {
-					Image image = new Image("file:image/tower/t1.gif"); 
-					imageView.setImage(image);
-				}else if(message.getColor() == 2) {
-					Image image = new Image("file:image/tower/t2.gif"); 
-					imageView.setImage(image);
-				}else if(message.getColor() == 3) {
-					Image image = new Image("file:image/tower/t3.gif"); 
-					imageView.setImage(image);
-				}else if(message.getColor() == 4) {
-					Image image = new Image("file:image/tower/t4.gif"); 
-					imageView.setImage(image);
-				}else if(message.getColor() == 5) {
-					Image image = new Image("file:image/tower/t5.gif"); 
-					imageView.setImage(image);
-				}else if(message.getColor() == 6) {
-					Image image = new Image("file:image/tower/t1.gif"); 
-					imageView.setImage(image);
-				}
-				imageView.setFitHeight(50);
-				imageView.setFitWidth(50); 	
-				gridPane.add(imageView, message.getCol(), message.getRow());
-			}else if(message.getColor() == -1 ){ // < 0 update balance
-					
-			}else { // attack action
-					
-			}
-			moneyBalance.setText(Integer.toString(controller.getBalance()));
-			System.out.println("col: " + message.getCol());
-			System.out.println("row: " + message.getRow());
-		}else { 
-			
-			
-			/*
-			 * move enemies on the view based on the data from model
-			 */
-			Map<Enemy, Point> map = model.getMap();
-			ArrayList<Enemy> removelist = new ArrayList<>();
-			
-			for(Entry<Enemy, Point> element : map.entrySet()) {
-				Enemy key = element.getKey();
-				System.out.print("enemy hp: " + key.getHp() + " ");
-			}
-			
-			// enemy in view
-			for (Entry<Enemy, Point> element : map.entrySet()) {
-				Enemy key = element.getKey();
-				Point value = element.getValue();
-				if (value==null) {
-					ImageView imageView = new ImageView();
-
-					imageView.setX(-50);
-					imageView.setY(-50);
-//					circle.setRadius(20);
-					if(key instanceof Enemy1) {
-						Image image = new Image("file:image/enemy/e1.gif"); 
-						imageView.setImage(image);	
-//						gridPane.add(imageView, j, i);
-//						controller.update_imagePos();
-//						circle.setFill(Color.RED);
-					}else if(key instanceof Enemy2) {
-						Image image = new Image("file:image/enemy/e2.gif"); 
-						imageView.setImage(image);
-//						circle.setFill(Color.PINK);
-					}else if(key instanceof Enemy3) {
-						Image image = new Image("file:image/enemy/e3.gif"); 
-						imageView.setImage(image);
-//						circle.setFill(Color.BLUE);
-					}else if(key instanceof Enemy4) {
-						Image image = new Image("file:image/enemy/e4.gif"); 
-						imageView.setImage(image);
-//						circle.setFill(Color.GREY);
-					}else {
-//						circle.setFill(Color.BLACK);
-					}
-					
-					imageView.setFitHeight(50);
-					imageView.setFitWidth(50);
-					/*Path path = new Path();
-					path.getElements().add(new MoveTo(key.getX(), key.getY()));*/
-					circleMap.put(key.getId(), imageView);
-					root.getChildren().add(imageView);
-					// create line
-				}else {
-					// find circle
-					ImageView circle = circleMap.get(key.getId());
-					// Trigger die?
-//					System.out.println(key.isAlive());
-					
-					
-					if (!key.isAlive()) {
-						circle.setVisible(false);
-						removelist.add(key);
-						circleMap.remove(key.getId());
-						
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-						model.addBalance(key.getCredit());
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-						
-					}else {
-						Path path = new Path();
-						path.getElements().add(new MoveTo(value.getX(), value.getY()));
-						path.getElements().add(new LineTo(key.getX(), key.getY()));
-						
-						// move in line
-						pathTransition = new PathTransition();
-						pathTransition.setDuration(Duration.millis(1000));
-						pathTransition.setNode(circle);
-						pathTransition.setPath(path);
-						//
-						pathTransition.play();
-						pathTransition.setOnFinished((event)->{
-//							System.out.println("end!!");
-							path.getElements().clear();
-						});
-
-						// enemy exits map without dying 
-						if(key.getX() == 15 * HEIGHT + 25) {
-							circle.setVisible(false);	
+				placeTower(message);
+			} else if (message.getColor() == -1) { // < 0 update balance
+				
+			} else if (message.getColor() == 99) { // attack action
+				attackAction(message);
+			}else if (message.getColor() == 404) { // attack action
+				playSound("404.wav");
+			}else if (message.getColor() == TowerDefenseMessge.TYPE_CHANGE_MAP) { // attack action
+				// alert 'continue?'
+				Platform.runLater(() -> {
+					AudioPlayer.player.stop(audios);
+					playSound("victory.wav");
+					Alert alert = new Alert(AlertType.CONFIRMATION);
+					alert.setTitle("Congratulations!");
+					alert.setHeaderText("You did a great a job!");
+					alert.setContentText("Do you want to move to next stage?");
+					Optional<ButtonType> result = alert.showAndWait();
+					TowerDefenseView.timeline.stop();
+//					ObservableList<KeyFrame> keyFrames = TowerDefenseView.timeline.getKeyFrames();
+//					for (int i = 0; i < keyFrames.size(); i++) {
+//					}
+					if (result.get() == ButtonType.OK) {
+						// ... user chose OK
+						TowerDefense.LEVEL++;
+						if(TowerDefense.LEVEL > 3) {
+							Alert al = new Alert(AlertType.INFORMATION);
+							al.setTitle("Thank You!");
+							al.setHeaderText(null);
+							al.setContentText("Thank you for choosing Tower Defense Game!");
+							al.showAndWait();
+							System.exit(1);
 						}
+						init();
+						createBoard(window);
+					} else {
+						// ... user chose CANCEL or closed the dialog
+						Alert al = new Alert(AlertType.INFORMATION);
+						al.setTitle("Thank You!");
+						al.setHeaderText(null);
+						al.setContentText("Thank you for choosing Tower Defense Game!");
+						al.showAndWait();
+						System.exit(1);
+					}
+				});
+			}
+		} else {
+			moveEnemy(model);
+		}
+		moneyBalance.setText(Integer.toString(controller.getBalance()));  
+	}
+
+	private void moveEnemy(TowerDefenseModel model) {
+		/*
+		 * move enemies on the view based on the data from model
+		 */
+		Map<Enemy, Point> map = model.getMap();
+		ArrayList<Enemy> removelist = new ArrayList<>();
+		// enemy in view
+		for (Entry<Enemy, Point> element : map.entrySet()) {
+			Enemy key = element.getKey();
+			Point value = element.getValue();
+			if (value == null) {
+				createEnemyView(key);
+				// create line
+			} else {
+				// find circle
+				ImageView circle = circleMap.get(key.getId());
+				if (circle==null) {
+					circle = createEnemyView(key);
+				}
+				
+				// Trigger die?
+				if (!key.isAlive()) {
+					circle.setVisible(false);
+					removelist.add(key);
+					circleMap.remove(key.getId());
+
+					//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+					model.addBalance(key.getCredit());
+					//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+				} else {
+					Path path = new Path();
+					path.getElements().add(new MoveTo(value.getX(), value.getY()));
+					path.getElements().add(new LineTo(key.getX(), key.getY()));
+
+					// move in line
+					pathTransition = new PathTransition();
+					pathTransition.setDuration(Duration.millis(1000));
+					pathTransition.setNode(circle);
+					pathTransition.setPath(path);
+					//
+					pathTransition.play();
+					pathTransition.setOnFinished((event) -> {
+						path.getElements().clear();
+					});
+
+					// enemy exits map without dying
+					if (key.getX() == 15 * HEIGHT + 25) {
+						circle.setVisible(false);
 					}
 				}
 			}
-			for(Enemy enemy : removelist) {
-				controller.removeEnemy(enemy);
-			}
-			System.out.println();
+		}
+		for (Enemy enemy : removelist) {
+			controller.removeEnemy(enemy);
+		}
+		System.out.println();
+	}
+
+	private ImageView createEnemyView(Enemy key) {
+		ImageView imageView = new ImageView();
+
+		imageView.setX(-50);
+		imageView.setY(-50);
+		if (key instanceof Enemy1) {
+			Image image = new Image("file:image/enemy/e1.gif");
+			imageView.setImage(image);
+		} else if (key instanceof Enemy2) {
+			Image image = new Image("file:image/enemy/e2.gif");
+			imageView.setImage(image);
+		} else if (key instanceof Enemy3) {
+			Image image = new Image("file:image/enemy/e3.gif");
+			imageView.setImage(image);
+		} else if (key instanceof Enemy4) {
+			Image image = new Image("file:image/enemy/e4.gif");
+			imageView.setImage(image);
+		} else {
 		}
 
+		imageView.setFitHeight(50);
+		imageView.setFitWidth(50);
+		circleMap.put(key.getId(), imageView);
+		root.getChildren().add(imageView);
+		return imageView;
+		
+	}
+
+	private void attackAction(TowerDefenseMessge message) {
+		String sound = "";
+		if (message.getTower() instanceof Tower1) {
+			sound = "Minigun_lvl3.wav";
+			playSound(sound);
+		} else if (message.getTower() instanceof Tower2) {
+			sound = "Sniper.wav";
+			playSound(sound);
+		} else if (message.getTower() instanceof Tower3) {
+			sound = "Rocketgun_launch.wav";
+			playSound(sound);
+		} else if (message.getTower() instanceof Tower4) {
+			sound = "Explosion.wav";
+			playSound(sound);
+		} else if (message.getTower() instanceof Tower5) {
+			sound = "Teslagun.wav";
+			playSound(sound);
+		}
+		Circle c = new Circle();
+		c.setFill(Color.BLACK);
+		c.setRadius(5);
+		Path p = new Path();
+		p.getElements().add(
+				new MoveTo(message.getTower().getTowerCOL() * 50 + 25, message.getTower().getTowerROW() * 50 + 25));
+		p.getElements().add(new LineTo(message.getEnemy().getX(), message.getEnemy().getY()));
+
+		PathTransition pt = new PathTransition();
+		pt.setDuration(Duration.millis(100));
+		pt.setNode(c);
+		pt.setPath(p);
+		pt.play();
+
+		pt.setOnFinished((event) -> {
+			c.setVisible(false);
+		});
+		root.getChildren().add(c);
+	}
+
+	private void placeTower(TowerDefenseMessge message) {
+		playSound("Building.wav");
+		ImageView imageView = new ImageView();
+		if (message.getColor() == 1) {
+			Image image = new Image("file:image/tower/t1.gif");
+			imageView.setImage(image);
+		} else if (message.getColor() == 2) {
+			Image image = new Image("file:image/tower/t2.gif");
+			imageView.setImage(image);
+		} else if (message.getColor() == 3) {
+			Image image = new Image("file:image/tower/t3.gif");
+			imageView.setImage(image);
+		} else if (message.getColor() == 4) {
+			Image image = new Image("file:image/tower/t4.gif");
+			imageView.setImage(image);
+		} else if (message.getColor() == 5) {
+			Image image = new Image("file:image/tower/t5.gif");
+			imageView.setImage(image);
+		} else if (message.getColor() == 6) {
+			Image image = new Image("file:image/tower/t6.gif");
+			imageView.setImage(image);
+		}
+		imageView.setFitHeight(50);
+		imageView.setFitWidth(50);
+		gridPane.add(imageView, message.getCol(), message.getRow());
+	}
+
+	private void sellTower(TowerDefenseMessge message) {
+		playSound("Buying.wav");
+		Image image = new Image("file:image/map" + TowerDefense.LEVEL + "/"
+				+ ((15 - message.getRow() - 1) * 15 + (15 - message.getCol())) + ".jpg");
+		ImageView imageView = new ImageView();
+		imageView.setImage(image);
+		imageView.setFitHeight(50);
+		imageView.setFitWidth(50);
+		gridPane.add(imageView, message.getCol(), message.getRow());
+	}
+
+	private void playSound(String sound) {
+		try {
+			InputStream music;
+			music = new FileInputStream(new File("audio/" + sound));
+			AudioStream audios = new AudioStream(music);
+			AudioPlayer.player.start(audios);
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, "Error");
+		}
+	}
+	
+	private void playBackground(String sound) {
+		try {
+			InputStream music;
+			music = new FileInputStream(new File("audio/" + sound));
+			audios = new AudioStream(music);
+			AudioPlayer.player.start(audios);
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, "Error");
+		}
 	}
 
 }

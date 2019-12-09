@@ -6,7 +6,11 @@ public class TowerDestory extends Tower {
 	private int x;
 	private int y;
 	private int cost;
-
+	
+	public void setId(String id) {
+		super.setId(id);
+	}
+	
 	public int getSellX() {
 		return x;
 	}

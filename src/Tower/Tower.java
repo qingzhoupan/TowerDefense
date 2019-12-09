@@ -1,9 +1,15 @@
 package Tower;
  
-import Enemies.Enemy;
+import java.io.Serializable;
+
 import MVC.Point;
 
-public abstract class Tower {
+public abstract class Tower implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7990071241630315383L;
+	
 	protected int damage;
 	protected int cost;
 //	protected int soldPrice = (int) 0.75 * cost;
