@@ -12,7 +12,6 @@ public abstract class Tower implements Serializable {
 	
 	protected int damage;
 	protected int cost;
-//	protected int soldPrice = (int) 0.75 * cost;
 	protected int range;
 	protected boolean exist;
 	protected int index;
@@ -20,12 +19,26 @@ public abstract class Tower implements Serializable {
 	protected int towerROW;
 	protected int towerCOL;
 	private String id;
+	protected String description;
+	protected String direction;
 	
 	
 	public abstract void upgrade();
 	public abstract boolean inRange(Point point);
 	
 	
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	public String getDirection() {
+		return direction;
+	}
+	public void setDirection(String direction) {
+		this.direction = direction;
+	}
 	public int getSoldPrice() {
 		return (int) (0.75 * cost);
 	}

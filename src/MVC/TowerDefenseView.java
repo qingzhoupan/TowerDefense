@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +34,8 @@ import javafx.animation.PathTransition;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -44,6 +48,11 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -90,7 +99,7 @@ public class TowerDefenseView extends Application implements Observer {
 		root = new Group(window);
 		createBoard(window);
 		createRightContainer(window);
-		Scene scene = new Scene(root, 850, 750);
+		Scene scene = new Scene(root, 1150, 750);
 		stage.setScene(scene);
 		stage.show();
 	}
@@ -159,11 +168,20 @@ public class TowerDefenseView extends Application implements Observer {
 	 *            BorderPane to add vBoxes
 	 */
 	private void createRightContainer(BorderPane window) {
-		VBox vBox = new VBox(50);
-		createMenu(vBox); // menu VBox
-		createMoney(vBox); // money VBox
-		createTowers(vBox); // tower VBox
-		window.setRight(vBox);
+		GridPane rightGrid = new GridPane();
+		rightGrid.setPadding(new Insets(10,10,10, 20));
+		rightGrid.setVgap(30);
+		rightGrid.setHgap(10);
+		//Image img = new Image("file:image/456.png");
+		//BackgroundImage background = new BackgroundImage(img, BackgroundRepeat.NO_REPEAT,BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.AUTO);
+//		rightGrid.setBackground());
+		rightGrid.setStyle("-fx-background-image:url('file:image/tut5_win.png')");
+		//rightGrid.setStyle("-fx-background-repeat:stretch;");
+		createMenu(rightGrid); // menu VBox
+		createMoney(rightGrid); // money VBox
+		createTowers(rightGrid); // tower VBox
+		createTowerInfo(rightGrid);
+		window.setRight(rightGrid);
 	}
 
 	/**
@@ -172,7 +190,7 @@ public class TowerDefenseView extends Application implements Observer {
 	 * @param vBox
 	 *            Vertical box to add children.
 	 */
-	private void createMenu(VBox vBox) {
+	private void createMenu(GridPane rightGrid) {
 		// Menu VBox
 		MenuBar menuBar = new MenuBar();
 		Menu menu = new Menu("Menu");
@@ -200,7 +218,7 @@ public class TowerDefenseView extends Application implements Observer {
 		menu.getItems().addAll(newGame, startGame, pause, speedUp, save, load);
 		menuBar.getMenus().add(menu);
 		VBox menuBox = new VBox(menuBar);
-		vBox.getChildren().add(menuBox);
+		rightGrid.add(menuBar,0,0);
 	}
 
 	/**
@@ -209,13 +227,13 @@ public class TowerDefenseView extends Application implements Observer {
 	 * @param vBox
 	 *            Vertical box to add children
 	 */
-	private void createMoney(VBox vBox) {
+	private void createMoney(GridPane rightGrid) {
 		VBox moneyBox = new VBox(5);
 		// TextFlow moneyDisplay = new TextFlow();
 		Text moneyTitle = new Text("BALANCE");
 		moneyBalance = new Label(Integer.toString(controller.getBalance()));
 		moneyBox.getChildren().addAll(moneyTitle, moneyBalance);
-		vBox.getChildren().add(moneyBox);
+		rightGrid.add(moneyBox,1,0);
 	}
 
 	/**
@@ -224,61 +242,104 @@ public class TowerDefenseView extends Application implements Observer {
 	 * @param vBox
 	 *            Vertical box to add children
 	 */
-	private void createTowers(VBox vBox) {
-		// main tower Vbox
-		VBox mainTowerBox = new VBox(30);
-
-		List<Tower> towerList = new ArrayList<Tower>();
-		Tower t = new Tower1();
-		towerList.add(t);
-		t = new Tower2();
-		towerList.add(t);
-		t = new Tower3();
-		towerList.add(t);
-		t = new Tower4();
-		towerList.add(t);
-		t = new Tower5();
-		towerList.add(t);
-		t = new Tower6();
-		towerList.add(t);
-
-		for (int i = 0; i < towerList.size(); i++) {
+	private void createTowers(GridPane rightGrid) {
+		  // main tower Vbox
+		  //VBox mainTowerBox = new VBox(20);
+		List<String> towerName = new ArrayList<String>(Arrays.asList("Machine Gun", "Sniper", "Cannon", "Rocket\nLauncher", "Tesla Gun", "Money\nGenerator"));
+		
+		List<Tower> towerList = towerList();
+		List<ImageView> imgList = imgList();
+		for (int i = 0; i < towerName.size(); i++) {
 			final String index = i + 1 + "";
+			ImageView image = imgList.get(i);
 			Tower tower = towerList.get(i);
 			VBox towerBox = new VBox(5);
-			Button towerButton = new Button(tower.getName());
-			Label towerCost = new Label("Cost: " + tower.getCost());
-			towerBox.getChildren().addAll(towerButton, towerCost);
-			mainTowerBox.getChildren().addAll(towerBox);
+			towerBox.setAlignment(Pos.CENTER);
+			Button towerButton = new Button(towerName.get(i));
+			towerBox.getChildren().addAll(image, towerButton);
+			rightGrid.add(towerBox, 0, i + 1);
+//			image.setOnMouseEntered(e -> {
+//				String info = "";
+//				info +="Cost: $" + tower.getCost() + "\n" + "Damage: " + tower.getDamage()+ "00\n" + "Range: " + tower.getRange();
+//		   
+//			});
 			towerButton.setOnAction(e -> {
-				playSound("Click.wav");
 				controller.new_tower_to_LCT(index);
 			});
 		}
 
-		VBox towerBox = new VBox(5);
+		VBox towerBox = new VBox(3);
+		towerBox.setAlignment(Pos.CENTER);
 		Button sellButton = new Button("sell");
-		Label sellReturn = new Label("get 75%");
-		towerBox.getChildren().addAll(sellButton, sellReturn);
-		mainTowerBox.getChildren().addAll(towerBox);
+		Label sellReturn = new Label("Returns 75% cost of tower");
+		towerBox.getChildren().addAll(sellButton);
+		rightGrid.add(towerBox,0, 7);
+		rightGrid.add(sellReturn, 1, 7);
 		sellButton.setOnMouseClicked(e -> {
 			int x = sellTower.getTowerCOL();
 			int y = sellTower.getTowerROW();
 			controller.sellTower(x, y);
-
 		});
-
-		VBox testBox = new VBox(5);
-		Button testButton = new Button("test");
-		towerBox.getChildren().addAll(testButton);
-		mainTowerBox.getChildren().addAll(testBox);
-		testButton.setOnMouseClicked(e -> {
-			this.fps();
-		});
-
-		vBox.getChildren().add(mainTowerBox);
 	}
+	
+	private void createTowerInfo(GridPane rightGrid) {
+		List<Tower> towerName = towerList();
+		for(int i = 0; i < towerName.size(); i++) {
+			Tower tower = towerName.get(i);
+			Label label = new Label();
+//			VBox vBox = new VBox();
+			for(int j = 0; j < 5; j++) {// 5 labels
+				String info = "";
+				info = "Name: "+tower.getName()+"\nDamage: "+tower.getDamage()+" dmg\nDescription: "+tower.getDirection()+"\nCost: $"+tower.getCost();
+				label = new Label(info);
+			}
+			rightGrid.add(label, 1, i+1);
+		}
+	}
+	
+	
+		 /**
+		  * Creates a list of tower objects to be used as buttons
+		  * @return List of Tower obejcts
+		  */
+	private List<Tower> towerList(){
+		List<Tower> towerList = new ArrayList<Tower>();
+		Tower t1 = new Tower1();
+		Tower t2 = new Tower2();
+		Tower t3 = new Tower3();
+		Tower t4 = new Tower4();
+		Tower t5 = new Tower5();
+		Tower t6 = new Tower6();
+		Collections.addAll(towerList, t1,t2,t3,t4,t5,t6);
+		return towerList;
+	 }
+	 
+	 /**
+	  * Creates individual Images in an image view into a list
+	  * @return A list of ImageView Objects to be displayed.
+	  */
+	private List<ImageView> imgList(){
+		List<ImageView> imgList = new ArrayList<ImageView>();
+		List<Image> imgs = new ArrayList<Image>();
+		Image image1 = new Image("file:image/tower/t1.png");
+		Image image2 = new Image("file:image/tower/t2.png");
+		Image image3 = new Image("file:image/tower/t3.png");
+		Image image4 = new Image("file:image/tower/t4.png");
+		Image image5 = new Image("file:image/tower/t5.png");
+		Image image6 = new Image("file:image/tower/t6.png");
+		Collections.addAll(imgs, image1,image2,image3,image4,image5, image6);
+		for(int i = 0; i < imgs.size(); i ++) {
+			ImageView imageView = new ImageView();
+			imageView.setImage(imgs.get(i));
+			imageView.setFitHeight(35);
+			imageView.setFitWidth(45);
+			imgList.add(imageView);
+		}
+		return imgList;
+	 }
 
+
+	
 	// Event handlers methods
 	private void startNewGame(MenuItem startGame, MenuItem pause, MenuItem speedUp) {
 		pause.setDisable(false);

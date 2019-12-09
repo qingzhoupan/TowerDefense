@@ -11,7 +11,9 @@ public class Tower4 extends Tower {
 		this.range = 4;
 		this.exist = true;
 		this.index = 4;
-		this.name = "Tower 4";
+		this.name = "Rocket Launcher";
+		this.description = "";
+		this.direction = "Right(East) 2 Meters";
 	}
 
 	public void upgrade() {

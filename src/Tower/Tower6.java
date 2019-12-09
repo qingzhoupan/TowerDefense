@@ -11,7 +11,9 @@ public class Tower6 extends Tower {
 		this.range = 0;
 		this.exist = true;
 		this.index = 6;
-		this.name = "Tower 6";
+		this.name = "Money Generator";
+		//this.description = "Increase Balance by $30/second";
+		this.direction = "Increase Balance by $30/sec";
 	}
 
 	public void upgrade() {
