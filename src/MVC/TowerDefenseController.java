@@ -290,7 +290,7 @@ public class TowerDefenseController {
 
 	public void save() {
 		try{  
-            FileOutputStream fs = new FileOutputStream("foo.ser");  // TODO
+            FileOutputStream fs = new FileOutputStream("savedFile.ser");  // TODO
             ObjectOutputStream os =  new ObjectOutputStream(fs);  
             os.writeObject(this.model);  
             os.close();  
@@ -301,7 +301,7 @@ public class TowerDefenseController {
 
 	public void load() {
 		try {
-			FileInputStream fs = new FileInputStream("foo.ser");  // TODO
+			FileInputStream fs = new FileInputStream("savedFile.ser");  // TODO
 			ObjectInputStream os =  new ObjectInputStream(fs);  
 			this.model = (TowerDefenseModel)os.readObject();
 			os.close(); 
