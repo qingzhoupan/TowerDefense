@@ -48,13 +48,9 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundImage;
-import javafx.scene.layout.BackgroundPosition;
-import javafx.scene.layout.BackgroundRepeat;
-import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -68,9 +64,19 @@ import main.TowerDefense;
 import sun.audio.AudioPlayer;
 import sun.audio.AudioStream;
 
+/**
+ * 
+ * @author  YongqiJia & JasonFukumoto & Qingzhou Pan & Guojun Wei
+ * CSC 335, Fall 2019
+ * Team Project
+ * The view class takes in player's action, click, place, sell tower, and menu 
+ * operation, the enemy comes out and the tower gives corresponding attack
+ *
+ */
+
 public class TowerDefenseView extends Application implements Observer {
 
-	public static final double HEIGHT = 50;
+	public static final double HEIGHT = 50; //each grid pane square size in pixel
 
 	public TowerDefenseController controller;
 	private GridPane gridPane = new GridPane();
@@ -82,16 +88,27 @@ public class TowerDefenseView extends Application implements Observer {
 	private BorderPane window;
 	private AudioStream audios;
 
+	/**
+	 * the constructor initialize the the controller and start sound for each stage
+	 */
 	public TowerDefenseView() {
 		init();
 
 	}
 
+	/**
+	 * the init method initialize the the controller and start sound for each stage
+	 */
 	public void init() {
 		controller = new TowerDefenseController(this);
 		playSound("start.wav");
 	}
 
+	/**
+	 * the entry point of JavaFX applications, the boarderpane is created with 
+	 * specified size.
+	 * @param the stage class is the outside container of JavaFX
+	 */
 	@Override
 	public void start(Stage stage) throws Exception {
 		stage.setTitle("Tower Defense");
@@ -105,33 +122,36 @@ public class TowerDefenseView extends Application implements Observer {
 	}
 
 	/**
-	 * Creates 50x50 grid which represents the 2D array. Each position corresponds
-	 * to the array.
+	 * paste image to the 15*15 grid pane based upon specific map info, set LCT 
+	 * tower info based upon the event, place or sell tower 
 	 * 
-	 * @param window:
-	 *            BorderPane to set grid
+	 * @param window: BorderPane to set grid
 	 */
 	private void createBoard(BorderPane window) {
+		//add background image from the map folder
+		int get_imagePos = controller.get_imagePos();
 		for (int i = 0; i < controller.getCol(); i++) {
 			for (int j = 0; j < controller.getRow(); j++) {
-
-				if (controller.get_imagePos() > 0) {
+				if (get_imagePos > 0) {
 					Image image = new Image(
-							"file:image/map" + TowerDefense.LEVEL + "/" + controller.get_imagePos() + ".jpg");
+							"file:image/map" + controller.getLEVEL() + "/" + 
+					get_imagePos + ".jpg");
 					ImageView imageView = new ImageView();
 					imageView.setImage(image);
 					imageView.setFitHeight(50);
 					imageView.setFitWidth(50);
 
 					gridPane.add(imageView, j, i);
-					controller.update_imagePos();
+					get_imagePos--;
 				}
 
 			}
 		}
+		//place tower
 		gridPane.setOnMouseClicked(e -> {
 			int x = (int) e.getX();
 			int y = (int) e.getY();
+			//if no tower at this position, place a tower
 			if (!controller.is_tower_here(x, y)) {
 				if (controller.getLCT() != null) {
 					controller.placeTower(x, y);
@@ -139,6 +159,7 @@ public class TowerDefenseView extends Application implements Observer {
 					// lct is null, nothing happen
 					playSound("404.wav");
 				}
+			//sell tower
 			} else {
 				if (controller.getLCT() == null) {
 					for (Tower tower : controller.getTowerList()) {
@@ -155,8 +176,8 @@ public class TowerDefenseView extends Application implements Observer {
 				}
 			}
 		});
-		gridPane.setVgap(0.2);
-		gridPane.setHgap(0.2);
+		gridPane.setVgap(0.2); // vertical gap between each grid pane square
+		gridPane.setHgap(0.2); // horizontal gap between each grid pane square
 		window.setCenter(gridPane);
 
 	}
@@ -172,20 +193,17 @@ public class TowerDefenseView extends Application implements Observer {
 		rightGrid.setPadding(new Insets(10,10,10, 20));
 		rightGrid.setVgap(30);
 		rightGrid.setHgap(10);
-		//Image img = new Image("file:image/456.png");
-		//BackgroundImage background = new BackgroundImage(img, BackgroundRepeat.NO_REPEAT,BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.AUTO);
-//		rightGrid.setBackground());
 		rightGrid.setStyle("-fx-background-image:url('file:image/tut5_win.png')");
-		//rightGrid.setStyle("-fx-background-repeat:stretch;");
 		createMenu(rightGrid); // menu VBox
 		createMoney(rightGrid); // money VBox
 		createTowers(rightGrid); // tower VBox
 		createTowerInfo(rightGrid);
 		window.setRight(rightGrid);
+		
 	}
 
 	/**
-	 * Creates the menu drop down for new game, pause, and speed
+	 * Creates the menu drop down for new game, pause, and speedup, save and load
 	 * 
 	 * @param vBox
 	 *            Vertical box to add children.
@@ -194,8 +212,7 @@ public class TowerDefenseView extends Application implements Observer {
 		// Menu VBox
 		MenuBar menuBar = new MenuBar();
 		Menu menu = new Menu("Menu");
-		MenuItem newGame = new MenuItem("New Game");
-		MenuItem startGame = new MenuItem("Start Game");
+		MenuItem startGame = new MenuItem("Play");
 		MenuItem pause = new MenuItem("Pause");
 		MenuItem speedUp = new MenuItem("Speed++");
 		MenuItem save = new MenuItem("Save");
@@ -215,9 +232,8 @@ public class TowerDefenseView extends Application implements Observer {
 		startGame.setOnAction(event -> {
 			startNewGame(startGame, pause, speedUp); // parameters used when new game
 		});
-		menu.getItems().addAll(newGame, startGame, pause, speedUp, save, load);
+		menu.getItems().addAll(startGame, pause, speedUp, save, load);
 		menuBar.getMenus().add(menu);
-		VBox menuBox = new VBox(menuBar);
 		rightGrid.add(menuBar,0,0);
 	}
 
@@ -228,25 +244,26 @@ public class TowerDefenseView extends Application implements Observer {
 	 *            Vertical box to add children
 	 */
 	private void createMoney(GridPane rightGrid) {
-		VBox moneyBox = new VBox(5);
-		// TextFlow moneyDisplay = new TextFlow();
-		Text moneyTitle = new Text("BALANCE");
+		HBox moneyBox = new HBox(5);
+		Image imgBalance = new Image("file:image/menu_sell1.png");
+		ImageView imgView = new ImageView(imgBalance);
+		imgView.setFitHeight(30);
+		imgView.setFitWidth(30);
 		moneyBalance = new Label(Integer.toString(controller.getBalance()));
-		moneyBox.getChildren().addAll(moneyTitle, moneyBalance);
+		moneyBalance.setTextFill(Color.web("#FFD700"));
+		moneyBalance.setStyle("-fx-font: 24 arial;");
+		moneyBox.getChildren().addAll(imgView,moneyBalance);
 		rightGrid.add(moneyBox,1,0);
 	}
 
 	/**
-	 * Creates tower boxes with event handlers.
+	 * Creates tower boxes with event handlers, sell button
 	 * 
 	 * @param vBox
 	 *            Vertical box to add children
 	 */
 	private void createTowers(GridPane rightGrid) {
-		  // main tower Vbox
-		  //VBox mainTowerBox = new VBox(20);
 		List<String> towerName = new ArrayList<String>(Arrays.asList("Machine Gun", "Sniper", "Cannon", "Rocket\nLauncher", "Tesla Gun", "Money\nGenerator"));
-		
 		List<Tower> towerList = towerList();
 		List<ImageView> imgList = imgList();
 		for (int i = 0; i < towerName.size(); i++) {
@@ -258,20 +275,16 @@ public class TowerDefenseView extends Application implements Observer {
 			Button towerButton = new Button(towerName.get(i));
 			towerBox.getChildren().addAll(image, towerButton);
 			rightGrid.add(towerBox, 0, i + 1);
-//			image.setOnMouseEntered(e -> {
-//				String info = "";
-//				info +="Cost: $" + tower.getCost() + "\n" + "Damage: " + tower.getDamage()+ "00\n" + "Range: " + tower.getRange();
-//		   
-//			});
 			towerButton.setOnAction(e -> {
+				playSound("Click.wav");
 				controller.new_tower_to_LCT(index);
 			});
 		}
-
 		VBox towerBox = new VBox(3);
 		towerBox.setAlignment(Pos.CENTER);
 		Button sellButton = new Button("sell");
 		Label sellReturn = new Label("Returns 75% cost of tower");
+		sellReturn.setTextFill(Color.web("#FFFFFF"));
 		towerBox.getChildren().addAll(sellButton);
 		rightGrid.add(towerBox,0, 7);
 		rightGrid.add(sellReturn, 1, 7);
@@ -281,27 +294,31 @@ public class TowerDefenseView extends Application implements Observer {
 			controller.sellTower(x, y);
 		});
 	}
-	
+
+	/**
+	 * Displays the information about each tower that includes the name, damage, description, and cost
+	 * @param rightGrid
+	 */
 	private void createTowerInfo(GridPane rightGrid) {
 		List<Tower> towerName = towerList();
 		for(int i = 0; i < towerName.size(); i++) {
 			Tower tower = towerName.get(i);
 			Label label = new Label();
-//			VBox vBox = new VBox();
 			for(int j = 0; j < 5; j++) {// 5 labels
 				String info = "";
 				info = "Name: "+tower.getName()+"\nDamage: "+tower.getDamage()+" dmg\nDescription: "+tower.getDirection()+"\nCost: $"+tower.getCost();
 				label = new Label(info);
+				label.setTextFill(Color.web("#FFFFFF"));
 			}
 			rightGrid.add(label, 1, i+1);
 		}
 	}
 	
 	
-		 /**
-		  * Creates a list of tower objects to be used as buttons
-		  * @return List of Tower obejcts
-		  */
+	/**
+  	* Creates a list of tower objects to be used as buttons
+  	* @return List of Tower obejcts
+  	*/
 	private List<Tower> towerList(){
 		List<Tower> towerList = new ArrayList<Tower>();
 		Tower t1 = new Tower1();
@@ -337,10 +354,13 @@ public class TowerDefenseView extends Application implements Observer {
 		}
 		return imgList;
 	 }
-
-
 	
-	// Event handlers methods
+	/**
+	 * start a new timeline to start the game
+	 * @param startGame action
+	 * @param pause game action
+	 * @param speedUp action
+	 */
 	private void startNewGame(MenuItem startGame, MenuItem pause, MenuItem speedUp) {
 		pause.setDisable(false);
 		speedUp.setDisable(false);
@@ -354,10 +374,16 @@ public class TowerDefenseView extends Application implements Observer {
 
 	}
 
+	/**
+	 * pause the game
+	 */
 	private void pauseGame() {
 		timeline.pause();
 	}
 
+	/**
+	 * double the game speed
+	 */
 	private void speedUpGame() {
 		timeline.stop();
 		timeline = new Timeline();
@@ -367,8 +393,11 @@ public class TowerDefenseView extends Application implements Observer {
 		timeline.play();
 	}
 
+	/**
+	 * choose different music for different levels, initialize the speed 1 sec/move
+	 */
 	private void startTimer() {
-		if(TowerDefense.LEVEL == 1 || TowerDefense.LEVEL == 2) {
+		if(controller.getLEVEL() == 1 || controller.getLEVEL() == 2) {
 			playBackground("1and2.wav");
 		}else {
 			playBackground("3.wav");
@@ -381,6 +410,11 @@ public class TowerDefenseView extends Application implements Observer {
 		timeline.play();
 	}
 
+	/**
+	 * create a new keyFrame and gives a update shorter time for faster speed,
+	 * call the fps(), add it to the timeline.
+	 * @param speed as the time in milliseconds
+	 */
 	private void addKeyFrame(double speed) {
 		KeyFrame keyFrame = new KeyFrame(Duration.millis(speed), e -> fps());
 		KeyFrame refrashEndStatus = new KeyFrame(Duration.millis(speed), e -> refrashEndStatus());
@@ -388,16 +422,26 @@ public class TowerDefenseView extends Application implements Observer {
 		timeline.getKeyFrames().add(refrashEndStatus);
 	}
 
+	/**
+	 * calls the frame per second from controller
+	 */
 	private void fps() {
 		controller.fps();
 	}
 
+	/**
+	 * change map with certain conditions with details in controller
+	 */
 	private void refrashEndStatus() {
 		controller.refrashEndStatus();
 	}
 
 	Map<String, ImageView> circleMap = new HashMap<>();
 
+	/**
+	 * draw images or gifs or execute different command based upon different 
+	 * instruction
+	 */
 	@Override
 	public void update(Observable o, Object arg) {
 		TowerDefenseModel model = (TowerDefenseModel) o;
@@ -413,6 +457,8 @@ public class TowerDefenseView extends Application implements Observer {
 				attackAction(message);
 			}else if (message.getColor() == 404) { // attack action
 				playSound("404.wav");
+			}else if (message.getColor() == TowerDefenseMessge.TYPE_LOAD) { // attack action
+					createBoard(window);
 			}else if (message.getColor() == TowerDefenseMessge.TYPE_CHANGE_MAP) { // attack action
 				// alert 'continue?'
 				Platform.runLater(() -> {
@@ -429,8 +475,9 @@ public class TowerDefenseView extends Application implements Observer {
 //					}
 					if (result.get() == ButtonType.OK) {
 						// ... user chose OK
-						TowerDefense.LEVEL++;
-						if(TowerDefense.LEVEL > 3) {
+						controller.addLevel();
+						System.out.println(controller.getLEVEL());
+						if(controller.getLEVEL() > 3) {
 							Alert al = new Alert(AlertType.INFORMATION);
 							al.setTitle("Thank You!");
 							al.setHeaderText(null);
@@ -457,10 +504,11 @@ public class TowerDefenseView extends Application implements Observer {
 		moneyBalance.setText(Integer.toString(controller.getBalance()));  
 	}
 
+	/**
+	 * move enemies on the view based on the data from model
+	 * @param model provides the enemy x, y coordinate for 
+	 */
 	private void moveEnemy(TowerDefenseModel model) {
-		/*
-		 * move enemies on the view based on the data from model
-		 */
 		Map<Enemy, Point> map = model.getMap();
 		ArrayList<Enemy> removelist = new ArrayList<>();
 		// enemy in view
@@ -516,6 +564,11 @@ public class TowerDefenseView extends Application implements Observer {
 		System.out.println();
 	}
 
+	/**
+	 * draw the enemy on the board according to the enemy type
+	 * @param key as enemy type UID
+	 * @return
+	 */
 	private ImageView createEnemyView(Enemy key) {
 		ImageView imageView = new ImageView();
 
@@ -544,6 +597,11 @@ public class TowerDefenseView extends Application implements Observer {
 		
 	}
 
+	/**
+	 * this method creates a black ball as bullet, shooting from the tower
+	 * to the enemy, gives different sound for different tower
+	 * @param message has the x, y coordinate of the tower and the enemy
+	 */
 	private void attackAction(TowerDefenseMessge message) {
 		String sound = "";
 		if (message.getTower() instanceof Tower1) {
@@ -582,6 +640,10 @@ public class TowerDefenseView extends Application implements Observer {
 		root.getChildren().add(c);
 	}
 
+	/**
+	 * place tower in the view, set x,y on the board a gif tower 
+	 * @param message with x, y coordinate for the tower
+	 */
 	private void placeTower(TowerDefenseMessge message) {
 		playSound("Building.wav");
 		ImageView imageView = new ImageView();
@@ -609,9 +671,13 @@ public class TowerDefenseView extends Application implements Observer {
 		gridPane.add(imageView, message.getCol(), message.getRow());
 	}
 
+	/**
+	 * when you sell tower, replace the image with the original background
+	 * @param message
+	 */
 	private void sellTower(TowerDefenseMessge message) {
 		playSound("Buying.wav");
-		Image image = new Image("file:image/map" + TowerDefense.LEVEL + "/"
+		Image image = new Image("file:image/map" + controller.getLEVEL() + "/"
 				+ ((15 - message.getRow() - 1) * 15 + (15 - message.getCol())) + ".jpg");
 		ImageView imageView = new ImageView();
 		imageView.setImage(image);
@@ -620,6 +686,10 @@ public class TowerDefenseView extends Application implements Observer {
 		gridPane.add(imageView, message.getCol(), message.getRow());
 	}
 
+	/**
+	 * play basic operation audio
+	 * @param sound
+	 */
 	private void playSound(String sound) {
 		try {
 			InputStream music;
@@ -631,6 +701,10 @@ public class TowerDefenseView extends Application implements Observer {
 		}
 	}
 	
+	/**
+	 * play background audio
+	 * @param sound as audio name
+	 */
 	private void playBackground(String sound) {
 		try {
 			InputStream music;

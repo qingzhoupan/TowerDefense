@@ -2,8 +2,19 @@ package Tower;
 
 import MVC.Point;
 
+/**
+ * 
+ * @author  YongqiJia & JasonFukumoto & QingzhouPan & GuojunWei
+ * CSC 335, Fall 2019
+ * Team Project
+ * Tower5 concrete class implementation
+ * 
+ */
 public class Tower5 extends Tower {
  
+	/**
+	 * constructor gives tower5 initial value
+	 */
 	public Tower5() {
 		super();
 		this.damage = 5;
@@ -16,11 +27,12 @@ public class Tower5 extends Tower {
 		this.direction = "Up/Down/Left/Right 2 Meters";
 	}
 
-	public void upgrade() {
-		this.damage *= 2;
-	}
 
-	// range ? // TODO
+	/**
+	 * tower5 shoots up, down, left, right direction
+	 * @param enemy point info
+	 * @return true if in range, otherwise false
+	 */
 	public boolean inRange(Point point) {
 		if (point.getCol()==null) {
 			return false;

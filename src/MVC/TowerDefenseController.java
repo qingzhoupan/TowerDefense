@@ -29,14 +29,24 @@ import main.TowerDefense;
 
 
 /**
- * @author guojunwei
+ * 
+ * @author  YongqiJia & JasonFukumoto & QingzhouPan & GuojunWei
+ * CSC 335, Fall 2019
+ * Team Project
+ * The controller class makes operations like read map info and put it into 
+ * model, makes place, sell tower, tower attack and enemy move
  *
  */
+
 public class TowerDefenseController {
 
 	TowerDefenseModel model;
 	TowerDefenseView view;
 
+	/**
+	 * constructor initialize the model, create the stage.
+	 * @param towerDefenseView
+	 */
 	public TowerDefenseController(TowerDefenseView towerDefenseView) {
 		model = new TowerDefenseModel();
 		createStage();
@@ -46,10 +56,16 @@ public class TowerDefenseController {
 		}
 	}
 
+	/**
+	 * this method reads through the txt file and get size of the map, initialize the 
+	 * board, read enemy waves and put into the list, read the enemy path x, y 
+	 * coordinate as point object and put into the path list
+	 * 
+	 */
 	private void createStage() {
 		Scanner input = null;
 		try {
-			input = new Scanner(new File("map"+TowerDefense.LEVEL+".txt"));
+			input = new Scanner(new File("map"+model.getLevel()+".txt"));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -89,6 +105,12 @@ public class TowerDefenseController {
 		}
 	}
 
+	/**
+	 * this helper function initialize the enemy and add it to the corresponding 
+	 * wave, and give a UID, so that each enemy is differnt
+	 * @param wave as enemy wave
+	 * @return the enemy list
+	 */
 	public ArrayList<Enemy> helper(String[] wave){
 		ArrayList<Enemy> list = new ArrayList<Enemy>();
 		for(int i = 0; i < wave.length; i++) {
@@ -126,12 +148,21 @@ public class TowerDefenseController {
 		model.setLCT(null);
 	}
 
+	/**
+	 * call sellTower from the model
+	 * @param x tower column pos
+	 * @param y tower row pos
+	 */
 	public void sellTower(int x, int y) {
 		if (getLCT() != null) {
 			model.sellTower(y, x);
 		}
 	}
 
+	/**
+	 * set tower object to the model setLCT
+	 * @param towerType in string
+	 */
 	public void new_tower_to_LCT(String towerType) {
 		if (towerType.equals("1")) {
 			Tower tower1 = new Tower1();
@@ -173,32 +204,61 @@ public class TowerDefenseController {
 		return true;
 	}
 
+	/**
+	 * return the tower position on the board
+	 * @param x in pixel
+	 * @param y in pixel
+	 * @return
+	 */
 	public Tower getTowerAt(int x, int y) {
 		int col = x / 50;
 		int row = y / 50;
 		return (Tower) model.get_objBoard_pos(row, col).getFirst();
 	}
 
+	/**
+	 * get y coordinate from model
+	 * @return y coordinate from model
+	 */
 	public int getRow() {
 		return model.getRow();
 	}
 
+	/**
+	 * get x coordinate from model
+	 * @return x coordinate from model
+	 */
 	public int getCol() {
 		return model.getCol();
 	}
 
+	/**
+	 * set last click tower from the model
+	 * @param tower
+	 */
 	public void setLCT(Tower tower) {
 		model.setLCT(tower);
 	}
 
+	/**
+	 * set last click tower from the model
+	 */
 	public void setLCT_null() {
 		model.setLCT(null);
 	}
 
+	/**
+	 * get last click tower from the model
+	 * @return last click tower from the model
+	 */
 	public Tower getLCT() {
 		return model.getLCT();
 	}
 
+	/**
+	 * get balance from the model
+	 * @return balance from the model
+	 */
 	public int getBalance() {
 		return model.getBalance();
 	}
@@ -211,6 +271,12 @@ public class TowerDefenseController {
 		return model.getPathCoord();
 	}
 
+	/**
+	 * what happens in each frame per time unit, if no enemies on the board, launch
+	 * the first wave, when the enemy is in the tower range, let tower make damage,
+	 * if enemy is dead, remove it from the enemy list, also makes the enemy move,
+	 * model is changed and notify the view in the model fps()
+	 */
 	public void fps() {
 		// set enemies waves
 		if(model.getMap().isEmpty() && !model.getWave().isEmpty()) {
@@ -222,7 +288,7 @@ public class TowerDefenseController {
 		for(Tower tower : model.getTowerList()) {
 			for (Iterator<Enemy> iterator = model.currentEnemyList.iterator(); iterator.hasNext();) {
 				Enemy enemy = iterator.next();
-				System.out.println(enemy.getCol());
+				//System.out.println(enemy.getCol());
 				if (tower.inRange(enemy)) {
 					model.attackAction(tower, enemy);
 					enemy.beingAttacked(tower.getDamage());		
@@ -264,18 +330,32 @@ public class TowerDefenseController {
 		model.fps();
 	}
 
+	/**
+	 * get rid of enemy when it's killed
+	 * @param key as enemy in the enemy:point map
+	 */
 	public void removeEnemy(Enemy key) {
 		model.getMap().remove(key);
 	}
 	
+	/**
+	 * return the image number(index) from the model
+	 * @return image number(index)
+	 */
 	public int get_imagePos() {
 		return model.imagePos();
 	}
 	
+	/**
+	 * decrement image number as called in model
+	 */
 	public void update_imagePos() {
 		model.update_imagePos();
 	}
 
+	/**
+	 * change map either enemies are killed or exit the map
+	 */
 	public void refrashEndStatus() {
 		if (!model.changingMap) {
 			if (model.getWave().isEmpty() && model.getMap().isEmpty()) {
@@ -284,12 +364,20 @@ public class TowerDefenseController {
 		}
 	}
 
+	/**
+	 * get the towerlist from the model
+	 * @return towerlist
+	 */
 	public ArrayList<Tower> getTowerList() {
 		return model.getTowerList();
 	}
 
+	/**
+	 * serialize the current gaming data(java file) to the "savedFile.ser" file
+	 */
 	public void save() {
 		try{  
+			model.saveLevel();
             FileOutputStream fs = new FileOutputStream("savedFile.ser");  // TODO
             ObjectOutputStream os =  new ObjectOutputStream(fs);  
             os.writeObject(this.model);  
@@ -299,18 +387,38 @@ public class TowerDefenseController {
         }  
 	}
 
+	/**
+	 * read (deserialize) the "savedFile.ser" to the java file
+	 */
 	public void load() {
 		try {
 			FileInputStream fs = new FileInputStream("savedFile.ser");  // TODO
 			ObjectInputStream os =  new ObjectInputStream(fs);  
 			this.model = (TowerDefenseModel)os.readObject();
+			model.loadLevel();
 			os.close(); 
-			System.out.println("loadTest !!!!!!!!!!!!!"+model.getCol());
+			System.out.println("loadTest !!!!!!!!!!!!!"+model.getLevel());
 			model.addObserver(this.view);
+			model.load();// here !!!!!!!!!!!
 			model.loadTower();
 			fps();
 		}catch(Exception ex){  
             ex.printStackTrace();  
 		}
+	}
+
+	/**
+	 * get level(map) from model
+	 * @return level(map) from model
+	 */
+	public int getLEVEL() {
+		return model.getLevel();
+	}
+
+	/**
+	 * add level by 1 as called in model
+	 */
+	public void addLevel() {
+		model.addLevel();	
 	}
 }

@@ -3,8 +3,19 @@ package Tower;
 import Enemies.Enemy;
 import MVC.Point;
 
+/**
+ * 
+ * @author  YongqiJia & JasonFukumoto & QingzhouPan & GuojunWei
+ * CSC 335, Fall 2019
+ * Team Project
+ * Tower2 concrete class implementation
+ * 
+ */
 public class Tower2 extends Tower {
 
+	/**
+	 * constructor gives tower2 initial value
+	 */
 	public Tower2() {
 		super();
 		this.damage = 2;
@@ -17,11 +28,13 @@ public class Tower2 extends Tower {
 		this.direction = "Down(South) 2 Meters";
 	}
 
-	public void upgrade() {
-		this.damage *= 2;
-	}
 
-	// range down
+
+	/**
+	 * tower2 shoots down direction
+	 * @param enemy point info
+	 * @return true if in range, otherwise false
+	 */
 	public boolean inRange(Point point) {
 		/*System.out.println("this.towerCOL"+this.towerCOL);
 		System.out.println("point.getCol()"+point.getCol());
