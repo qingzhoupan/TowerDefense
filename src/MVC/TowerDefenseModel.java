@@ -49,13 +49,20 @@ public class TowerDefenseModel extends Observable implements Serializable {
 
 	public List<Enemy> currentEnemyList;
 	
+	/**
+	 * get the level
+	 * @return the level
+	 */
 	public int getLevel() {
 		return LEVEL;
 	}
 	
+	/**
+	 * when the stage is over, increment level by 1
+	 */
 	public void addLevel() {
 		LEVEL += 1;
-		System.out.println("add one !!!!!!!!!!!!!!!!!");
+		//System.out.println("add one !!!!!!!!!!!!!!!!!");
 	}
 
 	/**
@@ -92,6 +99,10 @@ public class TowerDefenseModel extends Observable implements Serializable {
 
 	}
 
+	/**
+	 * turn point is added to the list
+	 * @param a is the x y coordinate read from the txt file
+	 */
 	public void setPathCoord(int a) {
 		this.pathCoord.add(a);
 	}
