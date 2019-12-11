@@ -182,7 +182,7 @@ public class TowerDefenseModel extends Observable implements Serializable {
 	 */
 	public void fps() {
 		for (Tower tower : towerList) {
-			if (tower.getName().equals("Tower 6")) {
+			if (tower.getName().equals("Money Generator")) {
 				addBalance(30);
 			}
 		}

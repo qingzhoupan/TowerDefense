@@ -82,11 +82,13 @@ public class TowerDefenseView extends Application implements Observer {
 	private GridPane gridPane = new GridPane();
 	private Tower sellTower = null;
 	private Label moneyBalance;
+	private Label livesLeft;
 	private static Timeline timeline;
 	private PathTransition pathTransition;
 	private Group root;
 	private BorderPane window;
 	private AudioStream audios;
+	private Stage stages;
 
 	/**
 	 * the constructor initialize the the controller and start sound for each stage
@@ -111,6 +113,7 @@ public class TowerDefenseView extends Application implements Observer {
 	 */
 	@Override
 	public void start(Stage stage) throws Exception {
+		stages = stage;
 		stage.setTitle("Tower Defense");
 		window = new BorderPane();
 		root = new Group(window);
@@ -118,6 +121,7 @@ public class TowerDefenseView extends Application implements Observer {
 		createRightContainer(window);
 		Scene scene = new Scene(root, 1150, 750);
 		stage.setScene(scene);
+		
 		stage.show();
 	}
 
@@ -243,17 +247,26 @@ public class TowerDefenseView extends Application implements Observer {
 	 * @param vBox
 	 *            Vertical box to add children
 	 */
-	private void createMoney(GridPane rightGrid) {
-		HBox moneyBox = new HBox(5);
-		Image imgBalance = new Image("file:image/menu_sell1.png");
-		ImageView imgView = new ImageView(imgBalance);
-		imgView.setFitHeight(30);
-		imgView.setFitWidth(30);
-		moneyBalance = new Label(Integer.toString(controller.getBalance()));
-		moneyBalance.setTextFill(Color.web("#FFD700"));
-		moneyBalance.setStyle("-fx-font: 24 arial;");
-		moneyBox.getChildren().addAll(imgView,moneyBalance);
-		rightGrid.add(moneyBox,1,0);
+	private void createMoney(GridPane rightGrid) {	
+		HBox moneyBox = new HBox(5);	
+		Image imgBalance = new Image("file:image/menu_sell1.png");	
+		ImageView imgView = new ImageView(imgBalance);	
+		Image imgLives = new Image("file:image/heart.png");	
+		ImageView imgViewLives = new ImageView(imgLives);	
+		imgView.setFitHeight(30);	
+		imgView.setFitWidth(30);	
+		imgViewLives.setFitHeight(30);	
+		imgViewLives.setFitWidth(30);	
+		moneyBalance = new Label(Integer.toString(controller.getBalance()));	
+		moneyBalance.setTextFill(Color.web("#FFD700"));	
+		moneyBalance.setStyle("-fx-font: 24 arial;");	
+		moneyBalance.setPadding(new Insets(0,20,0,5));	
+		livesLeft = new Label("5");	
+		livesLeft.setStyle("-fx-font: 24 arial;");	
+		livesLeft.setTextFill(Color.web("#FF0000"));	
+		livesLeft.setPadding(new Insets(0,0,0,5));	
+		moneyBox.getChildren().addAll(imgView,moneyBalance,imgViewLives, livesLeft);	
+		rightGrid.add(moneyBox,1,0);	
 	}
 
 	/**
@@ -551,9 +564,56 @@ public class TowerDefenseView extends Application implements Observer {
 						path.getElements().clear();
 					});
 
-					// enemy exits map without dying
-					if (key.getX() == 15 * HEIGHT + 25) {
-						circle.setVisible(false);
+					// enemy exits map without dying	
+					if (key.getX() == 15 * HEIGHT + 25) {	
+						Integer lives = Integer.parseInt(livesLeft.getText());	
+						lives--;	
+						livesLeft.setText(Integer.toString(lives));	
+						circle.setVisible(false);	
+						if(lives <=0 ) {	
+							timeline.stop();
+							Platform.runLater(() -> {
+								Alert alert = new Alert(AlertType.CONFIRMATION);
+								alert.setTitle("Congratulations!");
+								alert.setHeaderText("You suck.");
+								alert.setContentText("Do you want to try again?");
+								Optional<ButtonType> result = alert.showAndWait();
+								
+								if (result.get() == ButtonType.OK) {
+									// ... user chose OK
+//									controller.addLevel();
+//									System.out.println(controller.getLEVEL());
+//									if(controller.getLEVEL() > 3) {
+//										Alert al = new Alert(AlertType.INFORMATION);
+//										al.setTitle("Thank You!");
+//										al.setHeaderText(null);
+//										al.setContentText("Thank you for choosing Tower Defense Game!");
+//										al.showAndWait();
+//										System.exit(1);
+//									}
+									init();
+//									createBoard(window);
+									try {
+										start(stages);
+									} catch (Exception e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+								} else {
+									// ... user chose CANCEL or closed the dialog
+									Alert al = new Alert(AlertType.INFORMATION);
+									al.setTitle("Thank You!");
+									al.setHeaderText(null);
+									al.setContentText("Thank you for choosing Tower Defense Game!");
+									al.showAndWait();
+									System.exit(1);
+								}
+							});
+								
+							//ALERT	
+							//	
+							//init();	
+						}	
 					}
 				}
 			}
