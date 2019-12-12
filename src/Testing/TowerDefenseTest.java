@@ -1,62 +1,145 @@
 package Testing;
+import Enemies.*;
+import MVC.*;
+import Tower.*;
+import Networking.*;
+import main.*;
+import Testing.*;
 
 
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.PathTransition;
-import javafx.animation.Timeline;
-import javafx.application.Application;
-import javafx.scene.Group;
-import javafx.scene.Node;
-import javafx.scene.Scene;
-import javafx.scene.effect.BlendMode;
-import javafx.scene.effect.BoxBlur;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.CycleMethod;
-import javafx.scene.paint.LinearGradient;
-import javafx.scene.paint.Stop;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.LineTo;
-import javafx.scene.shape.MoveTo;
-import javafx.scene.shape.Path;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.StrokeType;
-import javafx.stage.Stage;
-import javafx.util.Duration;
-import static java.lang.Math.random;
 
-public class TowerDefenseTest extends Application {
 
-    public static void main(String[] args) {
-        launch(args);
-    }
+import static org.junit.jupiter.api.Assertions.*;
 
-    @Override
-    public void start(Stage primaryStage) {
-        Group root = new Group();
-        Scene scene = new Scene(root, 800, 600, Color.BLACK);
-        primaryStage.setScene(scene);
-        Circle c = new Circle();
-		c.setFill(Color.WHITE);
-		c.setRadius(10);
-		c.setCenterX(50);
-		c.setCenterY(50);
+import java.io.IOException;
+
+import org.junit.jupiter.api.Test;
+
+/**
+ * 
+ * @author  YongqiJia & JasonFukumoto & QingzhouPan & GuojunWei
+ * 
+ * Description: Tests all the files except for the view
+ *
+ */
+
+class TowerDefenseTest{
+	
+	/**
+	 * 
+	 */
+	@Test
+	public void testController() {
+//		TowerDefenseView view = new TowerDefenseView();
+//		view.startTimer();
+//		view.controller.
+		TowerDefenseController controller = new TowerDefenseController(null);
+		controller.callSelf();
+		System.out.println(controller.model.getWave().get(0));
+		controller.model.setRow(15);
+		controller.model.setCol(15);
+		controller.model.init_Board();
+		Tower LAST_CLICKED_TOWER = new Tower1();
+		Tower tower2 = new Tower2();
+		Tower tower3 = new Tower3();
+		Tower tower4 = new Tower4();
+		Tower tower5 = new Tower5();
+		Tower tower6 = new Tower6();
+		Enemy e1 = new Enemy1();
+		Enemy e2 = new Enemy2();
+		Enemy e3 = new Enemy3();
+		Enemy e4 = new Enemy4();
+		controller.model.setLCT(LAST_CLICKED_TOWER);
+		controller.model.set_objBoard_pos(1, 9, new TowerDefenseCell());
 		
-		Path p = new Path();
-//		
-//		System.out.println("move to ROW : " + message.getTower().getTowerROW()*50);
-//		System.out.println("move to COL : " + message.getTower().getTowerCOL()*50);
-//		System.out.println("line to ROW : " + message.getEnemy().getX());
-//		System.out.println("line to COL : " + message.getEnemy().getY());
-		p.getElements().add(new MoveTo(50, 50));
-		p.getElements().add(new LineTo(100, 100));
+		controller.get_imagePos();
+		controller.addLevel();
+		
+		TowerDefenseCell defCell = new TowerDefenseCell();
+		defCell.add(tower6);
+		//defCell.add(tower5);
+		defCell.test();
+		
+		TowerDefenseMessge mess = new TowerDefenseMessge(1,1,1);
+		mess.test();
+		
+		e1.test();
+		
+		controller.model.placeTower(1, 9);
+		String[] enemiesWave_1 = {"1", "2", "3", "4"};
+		controller.model.getWave().add(controller.helper(enemiesWave_1));
+		controller.is_tower_here(50, 450);
+		controller.model.getTowerList().add(LAST_CLICKED_TOWER);
+		controller.model.getTowerList().add(tower2);
+		controller.model.getTowerList().add(tower3);
+		controller.fps();
+		System.out.println(controller.getTowerList());
+		
+		Point point = new Point(1, 7);
+		double pointX = point.getX();
+		double pointY = point.getY();
+		LAST_CLICKED_TOWER.inRange(point);
+		tower2.inRange(point);
+		tower3.inRange(point);
+		tower4.inRange(point);
+		tower5.inRange(point);
+		tower6.inRange(point);
+		
+		Tower testTower = new Tower1();
+		testTower.test();
+		
+		controller.model.set_intBoard_pos(1,9,1);
+		controller.model.addBalance(100);
+		controller.model.changeMap();
+		controller.model.loadTower();
+		controller.model.load();
+		controller.model.addLevel();
+		controller.model.loadLevel();
+		controller.refrashEndStatus();
+		controller.is_tower_here(50, 450);
+		controller.sellTower(1, 5);
+		controller.model.setRow(7);
+		controller.model.attackAction(LAST_CLICKED_TOWER, e1);
+		controller.model.test();
+//		controller.placeTower(500, 200);
+//		controller.getTowerAt(135, 135);
+//		controller.getRow();
+//		controller.getCol();
+//		controller.getPathCoord();
+//		controller.getLEVEL();
+//		controller.getBalance();
+//		controller.get_intBoard();
+//		controller.load();
+//		controller.setLCT(tower2);
+//		controller.setLCT_null();
+//		controller.update_imagePos();
+		
+	}
+	
+	/**
+	 * 
+	 */
+	@Test
+	public void testControllerPlaceTower() {
+		TowerDefenseController controller = new TowerDefenseController(null);
+		controller.placeTower(500, 200);
+		controller.fps();
+		controller.save();
+		controller.new_tower_to_LCT("1");
+		controller.new_tower_to_LCT("2");
+		controller.new_tower_to_LCT("3");
+		controller.new_tower_to_LCT("4");
+		controller.new_tower_to_LCT("5");
+		controller.new_tower_to_LCT("6");
+//		controller.load();
+//		controller.getTowerAt(200, 400);
+//		controller.model.setRow(15);
+//		controller.model.setCol(15);
+//		controller.model.init_Board();
+//		Tower LAST_CLICKED_TOWER = new Tower6();
+//		controller.model.setLCT(LAST_CLICKED_TOWER);
+//		controller.model.set_objBoard_pos(7, 8, new TowerDefenseCell());
+		
+	}
 
-		PathTransition pt = new PathTransition();
-		pt.setDuration(Duration.millis(1000));
-		pt.setNode(c);
-		pt.setPath(p);
-		pt.play();
-
-        primaryStage.show();
-    }
 }

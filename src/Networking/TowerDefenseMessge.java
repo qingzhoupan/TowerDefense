@@ -86,4 +86,15 @@ public class TowerDefenseMessge {
 	public Enemy getEnemy() {
 		return enemy;
 	}
+	
+	/**
+	 * for test purpose
+	 */
+	public void test() {
+		int getRow = getRow();
+		int getCol = getCol();
+		int getColor = getColor();
+		Tower getTower = getTower();
+		Enemy getEnemy = getEnemy();
+	}
 }

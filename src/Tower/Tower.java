@@ -30,15 +30,17 @@ public abstract class Tower implements Serializable {
 	protected String description;
 	protected String direction;
 	
-	public String getDescription() {
-		return description;
-	}
-	public void setDescription(String description) {
-		this.description = description;
-	}
+	/**
+	 * get the tower shooting direction for the GUI
+	 * @return tower shooting direction for the GUI
+	 */
 	public String getDirection() {
 		return direction;
 	}
+	/**
+	 * get the tower shooting direction for the GUI
+	 * @param tower shooting direction
+	 */
 	public void setDirection(String direction) {
 		this.direction = direction;
 	}
@@ -189,5 +191,21 @@ public abstract class Tower implements Serializable {
 		this.id = id;
 	}
 	
+	/**
+	 * this for test purpose
+	 */
+	public void test() {
+		setRange(2);
+		setName("name");
+		setExist(true);
+		setDirection("up");
+		setDamage(2);
+		setCost(20);
+		boolean isExist = isExist();
+		int getSoldPrice = getSoldPrice();
+		int getRange = getRange();
+		int getDamage = getDamage();
+		String getDirection = getDirection();
+	}
 	
 } 

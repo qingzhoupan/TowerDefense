@@ -40,8 +40,8 @@ import main.TowerDefense;
 
 public class TowerDefenseController {
 
-	TowerDefenseModel model;
-	TowerDefenseView view;
+	public TowerDefenseModel model;
+	public TowerDefenseView view;
 
 	/**
 	 * constructor initialize the model, create the stage.
@@ -141,7 +141,7 @@ public class TowerDefenseController {
 	public void placeTower(int x, int y) {
 		int col = x / 50;
 		int row = y / 50;
-		System.out.println(model.get_intBoard_pos(row, col));
+		//System.out.println(model.get_intBoard_pos(row, col));
 		if (!is_tower_here(x, y) && model.get_intBoard_pos(row, col) == 0) {
 			model.placeTower(row, col);
 		}
@@ -420,5 +420,25 @@ public class TowerDefenseController {
 	 */
 	public void addLevel() {
 		model.addLevel();	
+	}
+	
+	/**
+	 * for test purpose
+	 */
+	public void callSelf() {
+		getRow();
+		getCol();
+		getLEVEL();
+		getBalance();
+		int balance = getBalance();
+		int board [][]= get_intBoard();
+		ArrayList<Integer> pathCoord = getPathCoord();
+		setLCT(new Tower1());
+		setLCT_null();
+		//load();
+		//Tower abc = getTowerAt(300, 200);
+		fps();
+		update_imagePos();
+		removeEnemy(new Enemy1());
 	}
 }

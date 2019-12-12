@@ -103,7 +103,20 @@ public abstract class Enemy extends Point {
 		this.hp = this.hp - damage;
 	}
 	
-	
+	/**
+	 * for test purpose
+	 */
+	public void test() {
+		setSpeed(100);
+		setHp(100);
+		setAlive(true);
+		beingAttacked(100);
+		int getSpeed = getSpeed();
+		String getId = getId();
+		int getCredit = getCredit();
+		int getHp = getHp();
+		boolean isAlive = isAlive();
+	}
 	
 	
 }

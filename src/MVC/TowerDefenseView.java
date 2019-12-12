@@ -409,7 +409,7 @@ public class TowerDefenseView extends Application implements Observer {
 	/**
 	 * choose different music for different levels, initialize the speed 1 sec/move
 	 */
-	private void startTimer() {
+	public void startTimer() {
 		if(controller.getLEVEL() == 1 || controller.getLEVEL() == 2) {
 			playBackground("1and2.wav");
 		}else {

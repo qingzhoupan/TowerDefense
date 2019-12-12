@@ -232,8 +232,8 @@ public class TowerDefenseModel extends Observable implements Serializable {
 
 	/**
 	 * get obj board position based upon row and col value
-	 * @param row
-	 * @param col
+	 * @param row y coordinate
+	 * @param col x coordinate
 	 * @return TowerDefenseCell object
 	 */
 	public TowerDefenseCell get_objBoard_pos(int row, int col) {
@@ -260,9 +260,9 @@ public class TowerDefenseModel extends Observable implements Serializable {
 
 	/**
 	 * get int value from int board based upon row and col value
-	 * @param row
-	 * @param col
-	 * @return
+	 * @param row 
+	 * @param col 
+	 * @return position in integer
 	 */
 	public int get_intBoard_pos(int row, int col) {
 		return intBoard[row][col];
@@ -271,9 +271,9 @@ public class TowerDefenseModel extends Observable implements Serializable {
 	
 	/**
 	 * set int value to int board position based upon row and col value
-	 * @param row
-	 * @param col
-	 * @param cell
+	 * @param row y coordinate
+	 * @param col x coordinate
+	 * @param i represents the tower
 	 */
 	public void set_intBoard_pos(int row, int col, int i) {
 		intBoard[row][col] = i;
@@ -415,5 +415,12 @@ public class TowerDefenseModel extends Observable implements Serializable {
 		LEVEL = this.level;
 	}
 	
+	/**
+	 * for test purpose
+	 */
+	public void test() {
+		Object[][] obj1 = get_objBoard();
+		TowerDefenseCell cell = get_objBoard_pos(5, 7);
+	}
 
 }

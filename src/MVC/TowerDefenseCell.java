@@ -18,13 +18,13 @@ public class TowerDefenseCell implements Serializable {
 	/**
 	 * constructor initialize an obj type array list 
 	 */
-	TowerDefenseCell(){
+	public TowerDefenseCell(){
 		cellList = new ArrayList<Object>();
 	}
 	
 	/**
 	 * can add obj to the arraylist
-	 * @param obj
+	 * @param obj is tower
 	 */
 	public void add(Object obj) {
 		cellList.add(obj);
@@ -39,7 +39,7 @@ public class TowerDefenseCell implements Serializable {
 	
 	/**
 	 * determine if the list is empty
-	 * @return
+	 * @return boolean if it's empty
 	 */
 	public boolean isEmpty() {
 		return cellList.size() == 0;
@@ -59,5 +59,17 @@ public class TowerDefenseCell implements Serializable {
 	 */
 	public ArrayList<Object> getList(){
 		return cellList;
+	}
+	
+	/**
+	 * for test purpose
+	 */
+	public void test() {
+		ArrayList<Object> list = getList();
+		Object item = getFirst();
+		setToEmpty();
+		boolean isEmpty = isEmpty();
+		
+		
 	}
 }
